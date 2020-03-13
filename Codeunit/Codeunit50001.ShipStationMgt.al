@@ -565,7 +565,7 @@ codeunit 50001 "ShipStation Mgt."
     local procedure _GetItemPrice(_ItemNo: Code[20]): Decimal
     var
         _Item: Record Item;
-        // _SalesPrice: Record "Sales Price";
+    // _SalesPrice: Record "Sales Price";
     begin
         if not _Item.Get(_ItemNo) then exit(0);
 
@@ -576,11 +576,11 @@ codeunit 50001 "ShipStation Mgt."
         //     SetFilter("Ending Date", '%1..', Today);
         //     if FindFirst() then
         //         exit("Unit Price")
-            // else begin
-            //     SetRange("Ending Date");
-            //     if FindFirst() then
-            //         exit("Unit Price");
-            // end;
+        // else begin
+        //     SetRange("Ending Date");
+        //     if FindFirst() then
+        //         exit("Unit Price");
+        // end;
         // end;
 
         exit(_Item."Unit Price");

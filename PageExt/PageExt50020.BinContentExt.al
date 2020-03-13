@@ -1,4 +1,4 @@
-pageextension 50101 "Bin Content Ext." extends "Bin Content"
+pageextension 50020 "Bin Content Ext." extends "Bin Content"
 {
     layout
     {

@@ -1,4 +1,4 @@
-tableextension 50100 "Find Bin with Lot No Ext." extends "Put-away Template Line"
+tableextension 50010 "Find Bin with Lot No Ext." extends "Put-away Template Line"
 {
     fields
     {

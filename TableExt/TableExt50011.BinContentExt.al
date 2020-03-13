@@ -1,4 +1,4 @@
-tableextension 50101 "Bin Content Ext." extends "Bin Content"
+tableextension 50011 "Bin Content Ext." extends "Bin Content"
 {
     fields
     {

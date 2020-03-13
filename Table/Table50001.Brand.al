@@ -1,4 +1,4 @@
-table 50001 Brand
+table 50001 "Brand"
 {
     DataClassification = ToBeClassified;
 
