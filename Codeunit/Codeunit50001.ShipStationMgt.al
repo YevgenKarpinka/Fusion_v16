@@ -5,7 +5,7 @@ codeunit 50001 "ShipStation Mgt."
     tabledata "Shipping Agent" = rimd, tabledata Customer = r,
     tabledata Item = r, tabledata Manufacturer = r,
     tabledata Brand = r, tabledata "Item Filter Group" = r,
-    tabledata "Item Category" = r, tabledata "Sales Price" = r,
+    tabledata "Item Category" = r,
     tabledata "Warehouse Shipment Line" = r, tabledata "Warehouse Shipment Header" = r,
     tabledata "Tenant Media" = rimd, tabledata "Document Attachment" = rimd,
     tabledata Contact = r, tabledata Location = r,
