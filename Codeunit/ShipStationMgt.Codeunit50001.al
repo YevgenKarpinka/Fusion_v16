@@ -5,7 +5,7 @@ codeunit 50001 "ShipStation Mgt."
     tabledata "Shipping Agent" = rimd, tabledata Customer = r,
     tabledata Item = r, tabledata Manufacturer = r,
     tabledata Brand = r, tabledata "Item Filter Group" = r,
-    tabledata "Item Category" = r, tabledata "Sales Price" = r,
+    tabledata "Item Category" = r,
     tabledata "Warehouse Shipment Line" = r, tabledata "Warehouse Shipment Header" = r,
     tabledata "Tenant Media" = rimd, tabledata "Document Attachment" = rimd,
     tabledata Contact = r, tabledata Location = r,
@@ -565,23 +565,23 @@ codeunit 50001 "ShipStation Mgt."
     local procedure _GetItemPrice(_ItemNo: Code[20]): Decimal
     var
         _Item: Record Item;
-        _SalesPrice: Record "Sales Price";
+    // _SalesPrice: Record "Sales Price";
     begin
         if not _Item.Get(_ItemNo) then exit(0);
 
-        with _SalesPrice do begin
-            SetCurrentKey("Item No.", "Sales Type", "Ending Date", "Unit Price");
-            SetRange("Item No.", _Item."No.");
-            SetRange("Sales Type", "Sales Type"::"All Customers");
-            SetFilter("Ending Date", '%1..', Today);
-            if FindFirst() then
-                exit("Unit Price")
-            // else begin
-            //     SetRange("Ending Date");
-            //     if FindFirst() then
-            //         exit("Unit Price");
-            // end;
-        end;
+        // with _SalesPrice do begin
+        //     SetCurrentKey("Item No.", "Sales Type", "Ending Date", "Unit Price");
+        //     SetRange("Item No.", _Item."No.");
+        //     SetRange("Sales Type", "Sales Type"::"All Customers");
+        //     SetFilter("Ending Date", '%1..', Today);
+        //     if FindFirst() then
+        //         exit("Unit Price")
+        // else begin
+        //     SetRange("Ending Date");
+        //     if FindFirst() then
+        //         exit("Unit Price");
+        // end;
+        // end;
 
         exit(_Item."Unit Price");
     end;
