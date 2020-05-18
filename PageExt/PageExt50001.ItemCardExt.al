@@ -618,6 +618,10 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
                         ItemDescriptionModify;
                     end;
                 }
+                field("Warning Qty"; "Warning Qty")
+                {
+                    ApplicationArea = All;
+                }
             }
         }
     }

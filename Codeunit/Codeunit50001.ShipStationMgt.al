@@ -536,52 +536,28 @@ codeunit 50001 "ShipStation Mgt."
         exit(_jsonObject);
     end;
 
-    local procedure jsonGetInventory(_ItemNo: Code[20]): JsonObject
+    local procedure jsonGetInventory(_ItemNo: Code[20]): Integer
     var
-        _ItemDescr: Record "Item Description";
         _Item: Record Item;
-        _jsonObject: JsonObject;
-        engNotInventory: Label 'Not Inventory';
-        engInventory: Label 'Inventory';
-        ruNotInventory: Label 'Нет в наличии';
-        ruInventory: Label 'В наличии';
     begin
-        if not _Item.Get(_ItemNo) then exit(_jsonObject);
+        if not _Item.Get(_ItemNo) then exit(0);
         _Item.CalcFields(Inventory);
         case _Item.Inventory of
             0:
-                begin
-                    _jsonObject.Add('eng', engNotInventory);
-                    _jsonObject.Add('ru', ruNotInventory);
-                end;
-            else begin
-                    _jsonObject.Add('eng', engInventory);
-                    _jsonObject.Add('ru', ruInventory);
-                end;
+                exit(0);
+            else
+                if _Item.Inventory <= _Item."Warning Qty" then
+                    exit(1)
+                else
+                    exit(2);
         end;
-        exit(_jsonObject)
     end;
 
     local procedure _GetItemPrice(_ItemNo: Code[20]): Decimal
     var
         _Item: Record Item;
-    // _SalesPrice: Record "Sales Price";
     begin
         if not _Item.Get(_ItemNo) then exit(0);
-
-        // with _SalesPrice do begin
-        //     SetCurrentKey("Item No.", "Sales Type", "Ending Date", "Unit Price");
-        //     SetRange("Item No.", _Item."No.");
-        //     SetRange("Sales Type", "Sales Type"::"All Customers");
-        //     SetFilter("Ending Date", '%1..', Today);
-        //     if FindFirst() then
-        //         exit("Unit Price")
-        // else begin
-        //     SetRange("Ending Date");
-        //     if FindFirst() then
-        //         exit("Unit Price");
-        // end;
-        // end;
 
         exit(_Item."Unit Price");
     end;

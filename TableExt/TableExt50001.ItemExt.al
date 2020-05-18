@@ -67,5 +67,10 @@ tableextension 50001 "Item Ext." extends Item
             DataClassification = CustomerContent;
             CaptionML = ENU = 'Transfered to eShop', RUS = 'Отправлено в eShop';
         }
+        field(50008; "Warning Qty"; Decimal)
+        {
+            DataClassification = CustomerContent;
+            CaptionML = ENU = 'Warning Qty', RUS = 'Количество Предупреждения';
+        }
     }
 }
