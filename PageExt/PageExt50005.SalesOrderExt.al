@@ -28,6 +28,12 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                 ApplicationArea = All;
                 Editable = false;
             }
+            field("Gross Weight"; "Gross Weight")
+            {
+                Importance = Additional;
+                ApplicationArea = All;
+                Editable = false;
+            }
         }
         addafter("Shipping Agent Code")
         {

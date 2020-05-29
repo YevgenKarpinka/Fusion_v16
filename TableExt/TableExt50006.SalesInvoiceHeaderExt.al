@@ -57,6 +57,15 @@ tableextension 50006 "Sales Invoice Header Ext." extends "Sales Invoice Header"
             DataClassification = CustomerContent;
             CaptionML = ENU = 'IC Document No.', RUS = 'МФ Документ Но.';
         }
+        field(50009; "Gross Weight"; Decimal)
+        {
+            CaptionML = ENU = 'Gross Weight', RUS = 'Вес брутто';
+            Editable = false;
+            FieldClass = FlowField;
+            AutoFormatExpression = "Currency Code";
+            AutoFormatType = 1;
+            CalcFormula = sum ("Sales Invoice Line"."Gross Weight" where("Document No." = field("No.")));
+        }
     }
 
     keys
