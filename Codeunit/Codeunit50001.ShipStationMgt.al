@@ -23,7 +23,7 @@ codeunit 50001 "ShipStation Mgt."
         salesHeader: Record "Sales Header";
     begin
         with SalesLine do
-            Validate("Position Gross Weight", "Gross Weight" * Quantity);
+            "Position Gross Weight" := "Gross Weight" * Quantity;
 
     end;
 

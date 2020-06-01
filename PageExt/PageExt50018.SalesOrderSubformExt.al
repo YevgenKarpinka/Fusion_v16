@@ -3,19 +3,20 @@ pageextension 50018 "Sales Order Subform Ext." extends "Sales Order Subform"
     layout
     {
         // Add changes to page layout here
+        modify(Quantity)
+        {
+            trigger OnAfterValidate()
+            begin
+                UpdateForm(true);
+            end;
+        }
         addafter("Shipment Date")
         {
             field("Position Gross Weight"; "Position Gross Weight")
             {
                 ApplicationArea = All;
             }
-        }
-        addafter("Total Amount Incl. VAT")
-        {
-            field("Order Gross Weight"; ShiStationMgt.CalculateSalesOrderGrossWeight("Document No."))
-            {
-                ApplicationArea = All;
-            }
+
         }
     }
 
