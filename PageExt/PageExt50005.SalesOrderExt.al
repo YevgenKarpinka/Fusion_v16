@@ -28,12 +28,6 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                 ApplicationArea = All;
                 Editable = false;
             }
-            field("Gross Weight"; "Gross Weight")
-            {
-                Importance = Additional;
-                ApplicationArea = All;
-                Editable = false;
-            }
         }
         addafter("Shipping Agent Code")
         {
@@ -173,7 +167,6 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
 
                     trigger OnAction()
                     var
-                        ShipStationMgt: Codeunit "ShipStation Mgt.";
                         _SH: Record "Sales Header";
                         lblOrderCreated: TextConst ENU = 'Order Created in ShipStation!', RUS = 'Заказ в ShipStation создан!';
                     begin
@@ -262,5 +255,7 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
     }
 
     var
+        ShipStationMgt: Codeunit "ShipStation Mgt.";
         salesOrderNotRegisterInShipStation: TextConst ENU = 'Sales Order %1 Not Register In ShipStation', RUS = 'Заказ Продажи %1 не зарегистророван в ShipStation';
+
 }

@@ -17,6 +17,28 @@ codeunit 50001 "ShipStation Mgt."
 
     end;
 
+    [EventSubscriber(ObjectType::Table, 37, 'OnValidateQuantityOnAfterCalcBaseQty', '', false, false)]
+    local procedure OnCalculateGrossWeightPosition(var SalesLine: Record "Sales Line")
+    var
+        salesHeader: Record "Sales Header";
+    begin
+        with SalesLine do
+            Validate("Position Gross Weight", "Gross Weight" * Quantity);
+
+    end;
+
+    procedure CalculateSalesOrderGrossWeight(OrderNo: Code[20]): Decimal
+    var
+        SalesLine: Record "Sales Line";
+    begin
+        with SalesLine do begin
+            SetRange("Document Type", "Document Type"::Order);
+            SetRange("Document No.", OrderNo);
+            CalcSums("Position Gross Weight");
+            exit("Position Gross Weight");
+        end;
+    end;
+
     procedure SentOrderShipmentStatusForWooComerse(_salesOrderNo: Code[20]; locShippedStatus: Integer)
     var
         _jsonOrderShipmentStatus: JsonObject;

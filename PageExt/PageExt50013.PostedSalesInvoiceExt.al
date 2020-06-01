@@ -21,12 +21,6 @@ pageextension 50013 "Posted Sales Invoice Ext." extends "Posted Sales Invoice"
                 Editable = false;
                 Importance = Additional;
             }
-            field("Gross Weight"; "Gross Weight")
-            {
-                ApplicationArea = All;
-                Editable = false;
-                Importance = Additional;
-            }
         }
     }
 
@@ -52,4 +46,6 @@ pageextension 50013 "Posted Sales Invoice Ext." extends "Posted Sales Invoice"
             }
         }
     }
+    var
+        ShipStationMgt: Codeunit "ShipStation Mgt.";
 }
