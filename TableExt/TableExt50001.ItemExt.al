@@ -72,5 +72,11 @@ tableextension 50001 "Item Ext." extends Item
             DataClassification = CustomerContent;
             CaptionML = ENU = 'Warning Qty', RUS = 'Количество Предупреждения';
         }
+        field(50009; "Web Price"; Decimal)
+        {
+            DataClassification = CustomerContent;
+            CaptionML = ENU = 'Web Price', RUS = 'Цена для Web';
+            DecimalPlaces = 0 : 2;
+        }
     }
 }

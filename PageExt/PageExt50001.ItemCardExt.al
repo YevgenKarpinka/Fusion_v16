@@ -622,6 +622,10 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
                 {
                     ApplicationArea = All;
                 }
+                field("Web Price"; "Web Price")
+                {
+                    ApplicationArea = All;
+                }
             }
         }
     }
