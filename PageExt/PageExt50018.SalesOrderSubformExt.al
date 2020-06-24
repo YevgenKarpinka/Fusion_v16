@@ -10,14 +10,14 @@ pageextension 50018 "Sales Order Subform Ext." extends "Sales Order Subform"
                 UpdateForm(true);
             end;
         }
-        addafter("Shipment Date")
-        {
-            field("Position Gross Weight"; "Position Gross Weight")
-            {
-                ApplicationArea = All;
-            }
+        // addafter("Shipment Date")
+        // {
+        //     field("Position Gross Weight"; "Position Gross Weight")
+        //     {
+        //         ApplicationArea = All;
+        //     }
 
-        }
+        // }
     }
 
     actions

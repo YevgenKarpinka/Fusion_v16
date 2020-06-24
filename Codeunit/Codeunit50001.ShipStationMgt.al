@@ -17,25 +17,28 @@ codeunit 50001 "ShipStation Mgt."
 
     end;
 
-    [EventSubscriber(ObjectType::Table, 37, 'OnValidateQuantityOnAfterCalcBaseQty', '', false, false)]
-    local procedure OnCalculateGrossWeightPosition(var SalesLine: Record "Sales Line")
-    var
-        salesHeader: Record "Sales Header";
-    begin
-        with SalesLine do
-            "Position Gross Weight" := "Gross Weight" * Quantity;
-
-    end;
+    // [EventSubscriber(ObjectType::Table, 37, 'OnValidateQuantityOnAfterCalcBaseQty', '', false, false)]
+    // local procedure OnCalculateGrossWeightPosition(var SalesLine: Record "Sales Line")
+    // begin
+    //     with SalesLine do
+    //         "Position Gross Weight" := "Gross Weight" * Quantity;
+    // end;
 
     procedure CalculateSalesOrderGrossWeight(OrderNo: Code[20]): Decimal
     var
         SalesLine: Record "Sales Line";
+        positionGrossWeight: Decimal;
     begin
         with SalesLine do begin
             SetRange("Document Type", "Document Type"::Order);
             SetRange("Document No.", OrderNo);
-            CalcSums("Position Gross Weight");
-            exit("Position Gross Weight");
+            if FindSet() then
+                repeat
+                    positionGrossWeight += Quantity * "Gross Weight";
+                until Next() = 0;
+            exit(positionGrossWeight);
+            // CalcSums("Position Gross Weight");
+            // exit("Position Gross Weight");
         end;
     end;
 
