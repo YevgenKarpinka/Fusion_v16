@@ -10,14 +10,6 @@ pageextension 50018 "Sales Order Subform Ext." extends "Sales Order Subform"
                 UpdateForm(true);
             end;
         }
-        // addafter("Shipment Date")
-        // {
-        //     field("Position Gross Weight"; "Position Gross Weight")
-        //     {
-        //         ApplicationArea = All;
-        //     }
-
-        // }
     }
 
     actions
@@ -39,7 +31,4 @@ pageextension 50018 "Sales Order Subform Ext." extends "Sales Order Subform"
             }
         }
     }
-
-    var
-        ShiStationMgt: Codeunit "ShipStation Mgt.";
 }

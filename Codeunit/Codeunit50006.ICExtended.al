@@ -255,12 +255,6 @@ codeunit 50006 "IC Extended"
         end;
     end;
 
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Release Sales Document", 'OnBeforeReleaseSalesDoc', '', false, false)]
-    local procedure ActivateReleaseMode(var SalesHeader: Record "Sales Header")
-    begin
-        ReleaseMode := true;
-    end;
-
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Release Sales Document", 'OnAfterReleaseSalesDoc', '', false, false)]
     local procedure CreatePOFromSO(var SalesHeader: Record "Sales Header")
     var
@@ -268,19 +262,12 @@ codeunit 50006 "IC Extended"
         _PurchaseOrderNo: code[20];
         _PostedPurchaseInvoceNo: Code[20];
     begin
-        ReleaseMode := false;
-        // with _PurchHeader do begin
-        //     SetCurrentKey("IC Document No.");
-        //     SetRange("IC Document No.", SalesHeader."No.");
-        //     SetRange("Document Type", "Document Type"::Order);
-        //     if IsEmpty then
         FoundPurchaseOrder(SalesHeader."No.", _PurchaseOrderNo, _PostedPurchaseInvoceNo);
         if (_PurchaseOrderNo = '') and (_PostedPurchaseInvoceNo = '') then begin
             CreateICPurchaseOrder(SalesHeader);
             CreateDeliverySalesLine(SalesHeader."No.", SalesHeader."Sell-to Customer No.");
             CreateItemChargeAssgnt(SalesHeader."No.", SalesHeader."Sell-to Customer No.");
         end;
-        // end;
     end;
 
     procedure CreateItemChargeAssgnt(_salesOrderNo: Code[20]; _customerNo: Code[20])
@@ -583,7 +570,6 @@ codeunit 50006 "IC Extended"
         ICInOutboxMgt: Codeunit ICInboxOutboxMgt;
         ApprovalsMgmt: Codeunit "Approvals Mgmt.";
         ShipStationMgt: Codeunit "ShipStation Mgt.";
-        ReleaseMode: Boolean;
         errPurchOrderPosted: TextConst ENU = 'Reopen Sales Order = %1 not allowed!\Purchase Order = %2 Posted!',
                                         RUS = 'Открыть Заказ Продажи = %1 нельзя!\Заказ Покупки = %2 учтен!';
         errICSalesOrderPosted: TextConst ENU = 'Reopen Sales Order = %1 not allowed!\Intercompany Sales Order = %2 Posted!',
