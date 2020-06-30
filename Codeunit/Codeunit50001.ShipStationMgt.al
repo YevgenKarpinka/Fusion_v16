@@ -1157,7 +1157,7 @@ codeunit 50001 "ShipStation Mgt."
         EXIT(DMY2DATE(Day, Month, Year));
     end;
 
-    local procedure Date2Text4JSON(_Date: Date): Text
+    procedure Date2Text4JSON(_Date: Date): Text
     var
         _Year: Text[4];
         _Month: Text[2];
