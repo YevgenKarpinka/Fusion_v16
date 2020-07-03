@@ -1051,7 +1051,8 @@ codeunit 50001 "ShipStation Mgt."
                 if _ID.Get(_SL."No.") then
                     JSObjectLine.Add('imageUrl', _ID."Main Image URL");
                 JSObjectLine.Add('weight', jsonWeightFromItem(_SL."Gross Weight"));
-                JSObjectLine.Add('quantity', Decimal2Integer(_SL.Quantity));
+                JSObjectLine.Add('quantity', _SL.Quantity);
+                // JSObjectLine.Add('quantity', Decimal2Integer(_SL.Quantity));
                 JSObjectLine.Add('unitPrice', Round(_SL."Amount Including VAT" / _SL.Quantity, 0.01));
                 JSObjectLine.Add('taxAmount', Round((_SL."Amount Including VAT" - _SL.Amount) / _SL.Quantity, 0.01));
                 // JSObjectLine.Add('shippingAmount', 0);
