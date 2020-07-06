@@ -878,7 +878,7 @@ codeunit 50001 "ShipStation Mgt."
             _List += '|' + _subString;
     end;
 
-    local procedure FillValuesFromOrder(_JSObject: JsonObject; DocNo: Code[20]; LocationCode: Code[20]): Text
+    procedure FillValuesFromOrder(_JSObject: JsonObject; DocNo: Code[20]; LocationCode: Code[20]): Text
     var
         JSObjectHeader: JsonObject;
         JSText: Text;
