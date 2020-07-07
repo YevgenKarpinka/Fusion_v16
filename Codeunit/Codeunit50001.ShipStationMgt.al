@@ -718,6 +718,9 @@ codeunit 50001 "ShipStation Mgt."
         JSText: Text;
         JSObject: JsonObject;
         WhseShipDocNo: Code[20];
+        lblOrder: TextConst ENU = 'LabelOrder';
+        FileName: Text;
+        _txtBefore: Text;
     begin
         GetShipStationSetup();
         if not glShipStationSetup."ShipStation Integration Enable" then exit;
@@ -736,7 +739,9 @@ codeunit 50001 "ShipStation Mgt."
         UpdateSalesHeaderFromShipStation(_SH."No.", JSObject);
 
         if not FindWarehouseSipment(DocNo, WhseShipDocNo) then Error(errorWhseShipNotExist, DocNo);
-        DeleteAttachment(WhseShipDocNo);
+        _txtBefore := _SH."No." + '-' + _SH."Package Tracking No.";
+        FileName := StrSubstNo('%1-%2.pdf', _txtBefore, lblOrder);
+        DeleteAttachment(WhseShipDocNo, FileName);
     end;
 
     local procedure UpdateOrderFromLabel(DocNo: Code[20]; jsonText: Text);
@@ -769,11 +774,11 @@ codeunit 50001 "ShipStation Mgt."
         exit(false);
     end;
 
-    local procedure SaveLabel2Shipment(_txtBefore: Text; _txtLabelBase64: Text; _WhseShipDocNo: Code[20])
+    procedure SaveLabel2Shipment(_txtBefore: Text; _txtLabelBase64: Text; _WhseShipDocNo: Code[20])
     var
         RecRef: RecordRef;
         WhseShipHeader: Record "Warehouse Shipment Header";
-        lblOrder: TextConst ENU = 'LabelOrder', RUS = 'БиркаЗаказа';
+        lblOrder: TextConst ENU = 'LabelOrder';
         FileName: Text;
         tempblob: Codeunit "Temp Blob";
     begin
@@ -815,7 +820,7 @@ codeunit 50001 "ShipStation Mgt."
         end;
     end;
 
-    local procedure DeleteAttachment(_WhseShipDocNo: Code[20])
+    procedure DeleteAttachment(_WhseShipDocNo: Code[20]; _FileName: Text[250])
     var
         DocumentAttachment: Record "Document Attachment";
         WhseShipHeader: Record "Warehouse Shipment Header";
@@ -831,9 +836,10 @@ codeunit 50001 "ShipStation Mgt."
             _FieldRef := _RecordRef.Field(1);
             RecNo := _FieldRef.Value;
 
-            SetCurrentKey("Table ID", "No.");
+            SetCurrentKey("Table ID", "No.", "File Name");
             SetRange("Table ID", _RecordRef.Number);
             SetRange("No.", RecNo);
+            SetRange("File Name", _FileName);
             DeleteAll();
         end;
     end;
