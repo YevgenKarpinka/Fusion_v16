@@ -115,20 +115,23 @@ codeunit 50001 "ShipStation Mgt."
         Headers: HttpHeaders;
         Client: HttpClient;
         responseText: Text;
+        Autorization: Text;
     begin
         SourceParameters.Get(SPCode);
 
         RequestMessage.Method := Format(SourceParameters."FSp RestMethod");
         if newURL = '' then
-            RequestMessage.SetRequestUri(SourceParameters."FSp URL")
+            newURL := SourceParameters."FSp URL"
         else
-            RequestMessage.SetRequestUri(StrSubstNo('%1%2', SourceParameters."FSp URL", newURL));
+            newURL := StrSubstNo('%1%2', SourceParameters."FSp URL", newURL);
 
+        RequestMessage.SetRequestUri(newURL);
         RequestMessage.GetHeaders(Headers);
 
         if SourceParameters."FSp RestMethod" = SourceParameters."FSp RestMethod"::POST then begin
             if SPCode = 'LOGIN2ESHOP' then begin
-                Body2Request := StrSubstNo('%1=%2&%3=%4', 'email', SourceParameters."FSp UserName", 'password', SourceParameters."FSp Password");
+                Autorization := StrSubstNo('%1=%2&%3=%4', 'email', SourceParameters."FSp UserName", 'password', SourceParameters."FSp Password");
+                Body2Request := Autorization;
             end;
             RequestMessage.Content.WriteFrom(Body2Request);
             RequestMessage.Content.GetHeaders(Headers);
@@ -141,6 +144,10 @@ codeunit 50001 "ShipStation Mgt."
         Client.Send(RequestMessage, ResponseMessage);
         ResponseMessage.Content.ReadAs(responseText);
         IsSuccessStatusCode := ResponseMessage.IsSuccessStatusCode();
+
+        // Insert Operation to Log
+        InsertOperationToLog('ESHOP', Format(SourceParameters."FSp RestMethod"), newURL, Autorization, Body2Request, responseText, IsSuccessStatusCode);
+
         exit(responseText);
     end;
 
@@ -164,23 +171,25 @@ codeunit 50001 "ShipStation Mgt."
         ResponseMessage: HttpResponseMessage;
         Headers: HttpHeaders;
         Client: HttpClient;
-        JSText: Text;
+        responseText: Text;
         JSObject: JsonObject;
         errMessage: Text;
         errExceptionMessage: Text;
         _InStream: InStream;
         _OutStream: OutStream;
+        Autorization: Text;
     begin
         SourceParameters.SetCurrentKey("FSp Event");
         SourceParameters.SetRange("FSp Event", SPCode);
-        SourceParameters.FindSet(false, false);
+        SourceParameters.FindFirst();
+
+        if newURL = '' then
+            newURL := SourceParameters."FSp URL"
+        else
+            newURL := StrSubstNo('%1%2', SourceParameters."FSp URL", newURL);
 
         RequestMessage.Method := Format(SourceParameters."FSp RestMethod");
-        if newURL = '' then
-            RequestMessage.SetRequestUri(SourceParameters."FSp URL")
-        else
-            RequestMessage.SetRequestUri(StrSubstNo('%1%2', SourceParameters."FSp URL", newURL));
-
+        RequestMessage.SetRequestUri(newURL);
         RequestMessage.GetHeaders(Headers);
         Headers.Add('Accept', SourceParameters."FSp Accept");
         if (SourceParameters."FSp AuthorizationFrameworkType" = SourceParameters."FSp AuthorizationFrameworkType"::OAuth2)
@@ -188,8 +197,9 @@ codeunit 50001 "ShipStation Mgt."
             Headers.Add('Authorization', SourceParameters."FSp AuthorizationToken");
         end else
             if SourceParameters."FSp UserName" <> '' then begin
-                Headers.Add('Authorization', StrSubstNo('Basic %1',
-                            Base64Convert.ToBase64(StrSubstNo('%1:%2', SourceParameters."FSp UserName", SourceParameters."FSp Password"))));
+                Autorization := StrSubstNo('Basic %1',
+                            Base64Convert.ToBase64(StrSubstNo('%1:%2', SourceParameters."FSp UserName", SourceParameters."FSp Password")));
+                Headers.Add('Authorization', Autorization);
             end;
 
         Headers.Add('If-Match', SourceParameters."FSp ETag");
@@ -204,15 +214,38 @@ codeunit 50001 "ShipStation Mgt."
         end;
 
         Client.Send(RequestMessage, ResponseMessage);
-        ResponseMessage.Content.ReadAs(JSText);
-        If ResponseMessage.IsSuccessStatusCode() then exit(JSText);
+        ResponseMessage.Content.ReadAs(responseText);
 
-        JSObject.ReadFrom(JSText);
-        errMessage := GetJSToken(JSObject, 'Message').AsValue().AsText();
-        errExceptionMessage := GetJSToken(JSObject, 'ExceptionMessage').AsValue().AsText();
-        Error('Web service returned error:\\Status code: %1\\Description: %2\\Message: %3\\Exception Message: %4\\Body Request:\\%5',
-            ResponseMessage.HttpStatusCode(), ResponseMessage.ReasonPhrase(), errMessage, errExceptionMessage, Body2Request);
+        GetShipStationSetup();
+        If not ResponseMessage.IsSuccessStatusCode() and glShipStationSetup."Show Error" then begin
+            JSObject.ReadFrom(responseText);
+            errMessage := GetJSToken(JSObject, 'Message').AsValue().AsText();
+            errExceptionMessage := GetJSToken(JSObject, 'ExceptionMessage').AsValue().AsText();
+            Error('Web service returned error:\\Status code: %1\\Description: %2\\Message: %3\\Exception Message: %4\\Body Request:\\%5',
+                ResponseMessage.HttpStatusCode(), ResponseMessage.ReasonPhrase(), errMessage, errExceptionMessage, Body2Request);
+        end;
 
+        // Insert Operation to Log
+        InsertOperationToLog('SS', Format(SourceParameters."FSp RestMethod"), newURL, Autorization, Body2Request, responseText, ResponseMessage.IsSuccessStatusCode());
+        exit(responseText);
+    end;
+
+    procedure InsertOperationToLog(Source: Code[10]; RestMethod: Code[10]; _URL: Text; _Autorization: Text; _Request: Text; _Response: Text; isSuccess: Boolean)
+    var
+        IntegrationLog: Record "Integration Log";
+    begin
+        with IntegrationLog do begin
+            Init();
+            "Operation Date" := CurrentDateTime;
+            "Source Operation" := Source;
+            Autorization := CopyStr(_Autorization, 1, MaxStrLen(Autorization));
+            "Rest Method" := RestMethod;
+            URL := _URL;
+            SetRequest(_Request);
+            SetResponse(_Response);
+            Success := isSuccess;
+            Insert(true);
+        end;
     end;
 
     procedure GetOrdersFromShipStation(): Text

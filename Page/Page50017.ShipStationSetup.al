@@ -17,16 +17,14 @@ page 50017 "ShipStation Setup"
                 field("ShipStation Integration Enable"; "ShipStation Integration Enable")
                 {
                     ApplicationArea = All;
-
-                    // trigger OnValidate()
-                    // begin
-                    //     isEditable := "ShipStation Integration Enable";
-                    // end;
                 }
                 field("Order Status Update"; "Order Status Update")
                 {
                     ApplicationArea = All;
-                    // Editable = isEditable;
+                }
+                field("Show Error"; "Show Error")
+                {
+                    ApplicationArea = All;
                 }
             }
         }

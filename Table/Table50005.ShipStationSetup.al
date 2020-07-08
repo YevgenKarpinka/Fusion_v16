@@ -13,17 +13,16 @@ table 50005 "ShipStation Setup"
         {
             DataClassification = CustomerContent;
             CaptionML = ENU = 'ShipStation Integration Enable', RUS = 'Интегрировать с ShipStation';
-
-            // trigger OnValidate()
-            // begin
-            //     if not "ShipStation Integration Enable" then
-            //         "Order Status Update" := "ShipStation Integration Enable";
-            // end;
         }
         field(3; "Order Status Update"; Boolean)
         {
             DataClassification = CustomerContent;
             CaptionML = ENU = 'Order Status Update', RUS = 'Обновлять статус заказа';
+        }
+        field(4; "Show Error"; Boolean)
+        {
+            DataClassification = CustomerContent;
+            CaptionML = ENU = 'Show Error', RUS = 'Показывать ошибку';
         }
     }
 
