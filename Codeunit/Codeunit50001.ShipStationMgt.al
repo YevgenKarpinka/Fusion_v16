@@ -226,7 +226,7 @@ codeunit 50001 "ShipStation Mgt."
         end;
 
         // Insert Operation to Log
-        InsertOperationToLog('SS', Format(SourceParameters."FSp RestMethod"), newURL, Autorization, Body2Request, responseText, ResponseMessage.IsSuccessStatusCode());
+        InsertOperationToLog('SSTATION', Format(SourceParameters."FSp RestMethod"), newURL, Autorization, Body2Request, responseText, ResponseMessage.IsSuccessStatusCode());
         exit(responseText);
     end;
 
