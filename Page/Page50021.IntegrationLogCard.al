@@ -51,27 +51,41 @@ page 50021 "Integration Log Card"
                     ToolTipML = ENU = 'Specifies the URL the operation integration.',
                                 RUS = 'Определяет URL операции интеграции.';
                 }
-                field(Request; _Request)
+                group(groupRequest)
                 {
-                    ApplicationArea = Warehouse;
-                    ToolTipML = ENU = 'Specifies the request integration.',
-                                RUS = 'Определяет запрос интеграции.';
+                    Caption = 'Request';
+                    field(Request; _Request)
+                    {
+                        ApplicationArea = Basic, Suite;
+                        Importance = Additional;
+                        MultiLine = true;
+                        ShowCaption = false;
+                        ToolTipML = ENU = 'Specifies the request integration.',
+                                    RUS = 'Определяет запрос интеграции.';
 
-                    trigger OnValidate()
-                    begin
-                        SetRequest(_Request);
-                    end;
+                        trigger OnValidate()
+                        begin
+                            SetRequest(_Request);
+                        end;
+                    }
                 }
-                field(Response; _Response)
+                group(groupResponse)
                 {
-                    ApplicationArea = Warehouse;
-                    ToolTipML = ENU = 'Specifies the response integration.',
-                                RUS = 'Определяет ответ интеграции.';
+                    Caption = 'Response';
+                    field(Response; _Response)
+                    {
+                        ApplicationArea = Basic, Suite;
+                        Importance = Additional;
+                        MultiLine = true;
+                        ShowCaption = false;
+                        ToolTipML = ENU = 'Specifies the response integration.',
+                                    RUS = 'Определяет ответ интеграции.';
 
-                    trigger OnValidate()
-                    begin
-                        SetResponse(_Response);
-                    end;
+                        trigger OnValidate()
+                        begin
+                            SetResponse(_Response);
+                        end;
+                    }
                 }
             }
         }

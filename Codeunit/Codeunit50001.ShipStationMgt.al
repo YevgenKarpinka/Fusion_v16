@@ -241,10 +241,11 @@ codeunit 50001 "ShipStation Mgt."
             Autorization := CopyStr(_Autorization, 1, MaxStrLen(Autorization));
             "Rest Method" := RestMethod;
             URL := _URL;
-            SetRequest(_Request);
-            SetResponse(_Response);
             Success := isSuccess;
             Insert(true);
+            SetRequest(_Request);
+            SetResponse(_Response);
+            Commit();
         end;
     end;
 
@@ -939,12 +940,11 @@ codeunit 50001 "ShipStation Mgt."
         JSObjectHeader.Add('shipDate', Date2Text4SS(Today));
         JSObjectHeader.Add('weight', GetJSToken(_JSObject, 'weight').AsObject());
 
+        // JSObjectHeader.Add('shipFrom', jsonShipFrom(LocationCode));
+        // JSObjectHeader.Add('shipTo', jsonShipToFromSH(DocNo));
+
         if not GetJSToken(_JSObject, 'dimensions').isValue() then
             JSObjectHeader.Add('dimensions', GetJSToken(_JSObject, 'dimensions').AsObject());
-
-        JSObjectHeader.Add('shipFrom', jsonShipFrom(LocationCode));
-
-        JSObjectHeader.Add('shipTo', jsonShipToFromSH(DocNo));
 
         if not GetJSToken(_JSObject, 'insuranceOptions').IsValue then begin
             jsonInsurance := GetJSToken(_JSObject, 'insuranceOptions').AsObject();
@@ -1090,8 +1090,8 @@ codeunit 50001 "ShipStation Mgt."
                 if _ID.Get(_SL."No.") then
                     JSObjectLine.Add('imageUrl', _ID."Main Image URL");
                 JSObjectLine.Add('weight', jsonWeightFromItem(_SL."Gross Weight"));
-                JSObjectLine.Add('quantity', _SL.Quantity);
-                // JSObjectLine.Add('quantity', Decimal2Integer(_SL.Quantity));
+                // JSObjectLine.Add('quantity', _SL.Quantity);
+                JSObjectLine.Add('quantity', Decimal2Integer(_SL.Quantity));
                 JSObjectLine.Add('unitPrice', Round(_SL."Amount Including VAT" / _SL.Quantity, 0.01));
                 JSObjectLine.Add('taxAmount', Round((_SL."Amount Including VAT" - _SL.Amount) / _SL.Quantity, 0.01));
                 // JSObjectLine.Add('shippingAmount', 0);
@@ -1104,7 +1104,7 @@ codeunit 50001 "ShipStation Mgt."
         exit(JSObjectArray);
     end;
 
-    local procedure Decimal2Integer(_Decimal: Decimal): Integer
+    procedure Decimal2Integer(_Decimal: Decimal): Integer
     begin
         exit(Round(_Decimal, 1));
     end;
