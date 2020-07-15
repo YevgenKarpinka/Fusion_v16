@@ -216,17 +216,19 @@ codeunit 50001 "ShipStation Mgt."
         Client.Send(RequestMessage, ResponseMessage);
         ResponseMessage.Content.ReadAs(responseText);
 
+        // Insert Operation to Log
+        InsertOperationToLog('SSTATION', Format(SourceParameters."FSp RestMethod"), newURL, Autorization, Body2Request, responseText, ResponseMessage.IsSuccessStatusCode());
+
         GetShipStationSetup();
         If not ResponseMessage.IsSuccessStatusCode() and glShipStationSetup."Show Error" then begin
             JSObject.ReadFrom(responseText);
-            errMessage := GetJSToken(JSObject, 'Message').AsValue().AsText();
+            // errMessage := GetJSToken(JSObject, 'Message').AsValue().AsText();
             errExceptionMessage := GetJSToken(JSObject, 'ExceptionMessage').AsValue().AsText();
-            Error('Web service returned error:\\Status code: %1\\Description: %2\\Message: %3\\Exception Message: %4\\Body Request:\\%5',
-                ResponseMessage.HttpStatusCode(), ResponseMessage.ReasonPhrase(), errMessage, errExceptionMessage, Body2Request);
+            // Error('Web service returned error:\\Status code: %1\\Description: %2\\Message: %3\\Exception Message: %4',
+            //     ResponseMessage.HttpStatusCode(), ResponseMessage.ReasonPhrase(), errMessage, errExceptionMessage);
+            Error('Exception Message: %1', errExceptionMessage);
         end;
 
-        // Insert Operation to Log
-        InsertOperationToLog('SSTATION', Format(SourceParameters."FSp RestMethod"), newURL, Autorization, Body2Request, responseText, ResponseMessage.IsSuccessStatusCode());
         exit(responseText);
     end;
 
@@ -774,7 +776,7 @@ codeunit 50001 "ShipStation Mgt."
 
         if not FindWarehouseSipment(DocNo, WhseShipDocNo) then Error(errorWhseShipNotExist, DocNo);
         _txtBefore := _SH."No." + '-' + _SH."Package Tracking No.";
-        FileName := StrSubstNo('%1-%2.pdf', _txtBefore, lblOrder);
+        FileName := StrSubstNo('%1-%2', _txtBefore, lblOrder);
         DeleteAttachment(WhseShipDocNo, FileName);
     end;
 
@@ -944,26 +946,26 @@ codeunit 50001 "ShipStation Mgt."
         // JSObjectHeader.Add('shipFrom', jsonShipFrom(LocationCode));
         // JSObjectHeader.Add('shipTo', jsonShipToFromSH(DocNo));
 
-        if not GetJSToken(_JSObject, 'dimensions').isValue() then
-            JSObjectHeader.Add('dimensions', GetJSToken(_JSObject, 'dimensions').AsObject());
+        // if not GetJSToken(_JSObject, 'dimensions').isValue() then
+        //     JSObjectHeader.Add('dimensions', GetJSToken(_JSObject, 'dimensions').AsObject());
 
         jsonInsurance := GetJSToken(_JSObject, 'insuranceOptions').AsObject();
-        if GetJSToken(jsonInsurance, 'insuredValue').AsValue().AsDecimal() = 0 then begin
-            jsonInsuranceOptions.Add('provider', GetJSToken(jsonInsurance, 'provider').AsValue().AsText());
-            jsonInsuranceOptions.Add('insureShipment', GetJSToken(jsonInsurance, 'insureShipment').AsValue().AsBoolean());
+        if not GetJSToken(jsonInsurance, 'insureShipment').AsValue().AsBoolean() then begin
+            jsonInsuranceOptions.Add('provider', 'carrier');
+            jsonInsuranceOptions.Add('insureShipment', true);
             jsonInsuranceOptions.Add('insuredValue', GetJSToken(_JSObject, 'orderTotal').AsValue().AsDecimal());
         end else
             jsonInsuranceOptions := jsonInsurance;
         JSObjectHeader.Add('insuranceOptions', jsonInsuranceOptions);
 
-        if not GetJSToken(_JSObject, 'internationalOptions').IsValue then begin
-            jsonInternational := GetJSToken(_JSObject, 'internationalOptions').AsObject();
-            if not GetJSToken(jsonInternational, 'contents').AsValue().IsNull then
-                JSObjectHeader.Add('internationalOptions', GetJSToken(_JSObject, 'internationalOptions').AsObject());
-        end;
+        // if not GetJSToken(_JSObject, 'internationalOptions').IsValue then begin
+        //     jsonInternational := GetJSToken(_JSObject, 'internationalOptions').AsObject();
+        //     if not GetJSToken(jsonInternational, 'contents').AsValue().IsNull then
+        //         JSObjectHeader.Add('internationalOptions', GetJSToken(_JSObject, 'internationalOptions').AsObject());
+        // end;
 
-        if not GetJSToken(_JSObject, 'advancedOptions').IsValue then
-            JSObjectHeader.Add('advancedOptions', GetJSToken(_JSObject, 'advancedOptions').AsObject());
+        // if not GetJSToken(_JSObject, 'advancedOptions').IsValue then
+        //     JSObjectHeader.Add('advancedOptions', GetJSToken(_JSObject, 'advancedOptions').AsObject());
 
         JSObjectHeader.Add('testLabel', false);
         JSObjectHeader.WriteTo(JSText);
