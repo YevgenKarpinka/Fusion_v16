@@ -925,6 +925,7 @@ codeunit 50001 "ShipStation Mgt."
         jsonNull: JsonObject;
         jsonInsurance: JsonObject;
         jsonInternational: JsonObject;
+        jsonInsuranceOptions: JsonObject;
     begin
 
         if GetJSToken(_JSObject, 'carrierCode').AsValue().IsNull then
@@ -946,11 +947,14 @@ codeunit 50001 "ShipStation Mgt."
         if not GetJSToken(_JSObject, 'dimensions').isValue() then
             JSObjectHeader.Add('dimensions', GetJSToken(_JSObject, 'dimensions').AsObject());
 
-        if not GetJSToken(_JSObject, 'insuranceOptions').IsValue then begin
-            jsonInsurance := GetJSToken(_JSObject, 'insuranceOptions').AsObject();
-            if GetJSToken(jsonInsurance, 'insureShipment').AsValue().AsBoolean() then
-                JSObjectHeader.Add('insuranceOptions', GetJSToken(_JSObject, 'insuranceOptions').AsObject());
-        end;
+        jsonInsurance := GetJSToken(_JSObject, 'insuranceOptions').AsObject();
+        if GetJSToken(jsonInsurance, 'insuredValue').AsValue().AsDecimal() = 0 then begin
+            jsonInsuranceOptions.Add('provider', GetJSToken(jsonInsurance, 'provider').AsValue().AsText());
+            jsonInsuranceOptions.Add('insureShipment', GetJSToken(jsonInsurance, 'insureShipment').AsValue().AsBoolean());
+            jsonInsuranceOptions.Add('insuredValue', GetJSToken(_JSObject, 'orderTotal').AsValue().AsDecimal());
+        end else
+            jsonInsuranceOptions := jsonInsurance;
+        JSObjectHeader.Add('insuranceOptions', jsonInsuranceOptions);
 
         if not GetJSToken(_JSObject, 'internationalOptions').IsValue then begin
             jsonInternational := GetJSToken(_JSObject, 'internationalOptions').AsObject();
