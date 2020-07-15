@@ -188,7 +188,8 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                     ApplicationArea = All;
                     CaptionML = ENU = 'Get Rates', RUS = 'Получить Стоимость';
                     Image = CalculateShipment;
-                    Visible = Status = Status::Open;
+                    // Visible = Status = Status::Open;
+                    Visible = false;
 
                     trigger OnAction()
                     var
