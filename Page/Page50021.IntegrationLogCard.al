@@ -90,6 +90,13 @@ page 50021 "Integration Log Card"
             }
         }
     }
+
+    trigger OnAfterGetRecord()
+    begin
+        _Request := GetRequest();
+        _Response := GetResponse();
+    end;
+
     var
         _Request: Text;
         _Response: Text;
