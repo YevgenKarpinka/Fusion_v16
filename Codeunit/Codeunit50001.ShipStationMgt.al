@@ -677,12 +677,12 @@ codeunit 50001 "ShipStation Mgt."
         _SH."ShipStation Status" := CopyStr(GetJSToken(_jsonObject, 'orderStatus').AsValue().AsText(), 1, MaxStrLen(_SH."ShipStation Status"));
         _SH."ShipStation Shipment Amount" := GetJSToken(_jsonObject, 'shippingAmount').AsValue().AsDecimal();
 
-        case _SH."ShipStation Order Status" of
-            _SH."ShipStation Order Status"::"Not Sent":
-                _SH."ShipStation Order Status" := _SH."ShipStation Order Status"::Sent;
-            _SH."ShipStation Order Status"::Sent:
-                _SH."ShipStation Order Status" := _SH."ShipStation Order Status"::Updated;
-        end;
+        // case _SH."ShipStation Order Status" of
+        //     _SH."ShipStation Order Status"::"Not Sent":
+        //         _SH."ShipStation Order Status" := _SH."ShipStation Order Status"::Sent;
+        //     _SH."ShipStation Order Status"::Sent:
+        //         _SH."ShipStation Order Status" := _SH."ShipStation Order Status"::Updated;
+        // end;
 
         if _SH."ShipStation Status" = lblAwaitingShipment then begin
             _SH."Package Tracking No." := '';
@@ -717,12 +717,13 @@ codeunit 50001 "ShipStation Mgt."
 
         // Get Order from Shipstation to Fill Variables
         JSText := Connect2ShipStation(1, '', StrSubstNo('/%1', _SH."ShipStation Order ID"));
-
         JSObject.ReadFrom(JSText);
+
+        UpdateSalesHeaderFromShipStation(_SH."No.", JSObject);
         JSText := Connect2ShipStation(3, FillValuesFromOrder(JSObject, DocNo, GetLocationCode(DocNo)), '');
 
         // Update Order From Label
-        UpdateOrderFromLabel(DocNo, JSText);
+        UpdateOrderFromLabel(_SH."No.", JSText);
 
         // Add Lable to Shipment
         jsLabelObject.ReadFrom(JSText);
@@ -730,10 +731,18 @@ codeunit 50001 "ShipStation Mgt."
         txtBeforeName := _SH."No." + '-' + GetJSToken(jsLabelObject, 'trackingNumber').AsValue().AsText();
         SaveLabel2Shipment(txtBeforeName, txtLabel, WhseShipDocNo);
 
-        // Update Sales Header From ShipStation
-        JSText := Connect2ShipStation(1, '', StrSubstNo('/%1', _SH."ShipStation Order ID"));
-        JSObject.ReadFrom(JSText);
-        UpdateSalesHeaderFromShipStation(_SH."No.", JSObject);
+        ChangeShipStationStatusInSOToShipped(_SH."No.");
+    end;
+
+    local procedure ChangeShipStationStatusInSOToShipped(salesOrderNo: Code[20]);
+    var
+        salesHeader: Record "Sales Header";
+    begin
+        with salesHeader do begin
+            Get("Document Type"::Order, salesOrderNo);
+            "ShipStation Status" := lblShipped;
+            Modify();
+        end;
     end;
 
     local procedure GetLocationCode(DocNo: Code[20]): Code[10]
@@ -763,21 +772,32 @@ codeunit 50001 "ShipStation Mgt."
 
         if (DocNo = '') or (not _SH.Get(_SH."Document Type"::Order, DocNo)) or (_SH."ShipStation Shipment ID" = '') then exit(false);
 
+        if not FindWarehouseSipment(DocNo, WhseShipDocNo) then Error(errorWhseShipNotExist, DocNo);
+
         // Void Label in Shipstation
         JSObject.Add('shipmentId', _SH."ShipStation Shipment ID");
         JSObject.WriteTo(JSText);
         JSText := Connect2ShipStation(8, JSText, '');
-        JSObject.ReadFrom(JSText);
+        // JSObject.ReadFrom(JSText);
 
-        // Update Sales Header From ShipStation
-        JSText := Connect2ShipStation(1, '', StrSubstNo('/%1', _SH."ShipStation Order ID"));
-        JSObject.ReadFrom(JSText);
-        UpdateSalesHeaderFromShipStation(_SH."No.", JSObject);
-
-        if not FindWarehouseSipment(DocNo, WhseShipDocNo) then Error(errorWhseShipNotExist, DocNo);
         _txtBefore := _SH."No." + '-' + _SH."Package Tracking No.";
         FileName := StrSubstNo('%1-%2', _txtBefore, lblOrder);
         DeleteAttachment(WhseShipDocNo, FileName);
+
+        CleareTrackingNoShipmentIDInSO(_SH."No.");
+    end;
+
+    procedure CleareTrackingNoShipmentIDInSO(salesOrderNo: Code[20]);
+    var
+        salesHeader: Record "Sales Header";
+    begin
+        with salesHeader do begin
+            Get("Document Type"::Order, salesOrderNo);
+            "Package Tracking No." := '';
+            "ShipStation Shipment ID" := '';
+            "ShipStation Status" := lblAwaitingShipment;
+            Modify();
+        end;
     end;
 
     local procedure UpdateOrderFromLabel(DocNo: Code[20]; jsonText: Text);
@@ -943,12 +963,6 @@ codeunit 50001 "ShipStation Mgt."
         JSObjectHeader.Add('shipDate', Date2Text4SS(Today));
         JSObjectHeader.Add('weight', GetJSToken(_JSObject, 'weight').AsObject());
 
-        // JSObjectHeader.Add('shipFrom', jsonShipFrom(LocationCode));
-        // JSObjectHeader.Add('shipTo', jsonShipToFromSH(DocNo));
-
-        // if not GetJSToken(_JSObject, 'dimensions').isValue() then
-        //     JSObjectHeader.Add('dimensions', GetJSToken(_JSObject, 'dimensions').AsObject());
-
         jsonInsurance := GetJSToken(_JSObject, 'insuranceOptions').AsObject();
         if not GetJSToken(jsonInsurance, 'insureShipment').AsValue().AsBoolean() then begin
             jsonInsuranceOptions.Add('provider', 'carrier');
@@ -958,15 +972,6 @@ codeunit 50001 "ShipStation Mgt."
             jsonInsuranceOptions := jsonInsurance;
         JSObjectHeader.Add('insuranceOptions', jsonInsuranceOptions);
 
-        // if not GetJSToken(_JSObject, 'internationalOptions').IsValue then begin
-        //     jsonInternational := GetJSToken(_JSObject, 'internationalOptions').AsObject();
-        //     if not GetJSToken(jsonInternational, 'contents').AsValue().IsNull then
-        //         JSObjectHeader.Add('internationalOptions', GetJSToken(_JSObject, 'internationalOptions').AsObject());
-        // end;
-
-        // if not GetJSToken(_JSObject, 'advancedOptions').IsValue then
-        //     JSObjectHeader.Add('advancedOptions', GetJSToken(_JSObject, 'advancedOptions').AsObject());
-
         JSObjectHeader.Add('testLabel', false);
         JSObjectHeader.WriteTo(JSText);
         exit(JSText);
@@ -975,7 +980,6 @@ codeunit 50001 "ShipStation Mgt."
     procedure jsonBillToFromSH(DocNo: Code[20]): JsonObject
     var
         JSObjectLine: JsonObject;
-        txtBillTo: Text;
         _SH: Record "Sales Header";
         _Cust: Record Customer;
         _Contact: Record Contact;
@@ -1002,18 +1006,16 @@ codeunit 50001 "ShipStation Mgt."
     var
         JSObjectLine: JsonObject;
         _SH: Record "Sales Header";
-        _Cust: Record Customer;
     begin
         _SH.Get(_SH."Document Type"::Order, DocNo);
-        _Cust.Get(_SH."Sell-to Customer No.");
 
-        JSObjectLine.Add('name', _SH."Sell-to Contact");
+        JSObjectLine.Add('name', _SH."Ship-to Contact");
         JSObjectLine.Add('company', _SH."Sell-to Customer Name");
-        JSObjectLine.Add('street1', _SH."Sell-to Address");
-        JSObjectLine.Add('street2', _SH."Sell-to Address 2");
-        JSObjectLine.Add('city', _SH."Sell-to City");
-        JSObjectLine.Add('state', _SH."Sell-to County");
-        JSObjectLine.Add('postalCode', _SH."Sell-to Post Code");
+        JSObjectLine.Add('street1', _SH."Ship-to Address");
+        JSObjectLine.Add('street2', _SH."Ship-to Address 2");
+        JSObjectLine.Add('city', _SH."Ship-to City");
+        JSObjectLine.Add('state', _SH."Ship-to County");
+        JSObjectLine.Add('postalCode', _SH."Ship-to Post Code");
         JSObjectLine.Add('country', _SH."Ship-to Country/Region Code");
         JSObjectLine.Add('phone', _SH."Sell-to Phone No.");
         JSObjectLine.Add('residential', false);
@@ -1469,6 +1471,7 @@ codeunit 50001 "ShipStation Mgt."
         errServiceIsNull: TextConst ENU = 'Not Service Into ShipStation In Order = %1', RUS = 'В Заказе = %1 ShipStation не оппределен Сервис';
         errTotalGrossWeightIsZero: TextConst ENU = 'Total Gross Weight Order = %1\But Must Be > 0', RUS = 'Общий Брутто вес Заказа = %1\Должен быть > 0';
         lblAwaitingShipment: Label 'awaiting_shipment';
+        lblShipped: Label 'shipped';
         confUpdateCarriersList: TextConst ENU = 'Update the list %1?', RUS = 'Обновить список %1?';
         errorWhseShipNotExist: TextConst ENU = 'Warehouse Shipment is not Created for Sales Order = %1!', RUS = 'Для Заказа продажи = %1 не создана Складская отгрузка!';
         _shippedStatus: TextConst ENU = 'Shipped', RUS = 'Отгружен';
