@@ -16,14 +16,6 @@ tableextension 50003 "Sales Header Ext." extends "Sales Header"
             CaptionML = ENU = 'ShipStation Order Key', RUS = 'Ключ Заказа ShipStation';
             // Editable = false;
         }
-        field(50002; "ShipStation Order Status"; Option)
-        {
-            DataClassification = CustomerContent;
-            OptionMembers = "Not Sent",Sent,Updated;
-            OptionCaptionML = ENU = 'Not Sent,Sent,Updated', RUS = 'Не отправлен,Отправлен,Обновлен';
-            CaptionML = ENU = 'ShipStation Order Status', RUS = 'Статус Заказа ShipStation';
-            Editable = false;
-        }
         field(50003; "ShipStation Status"; Text[50])
         {
             DataClassification = CustomerContent;
@@ -62,7 +54,7 @@ tableextension 50003 "Sales Header Ext." extends "Sales Header"
 
     keys
     {
-        key(SK1; "ShipStation Order ID", "ShipStation Order Key", "ShipStation Order Status", "ShipStation Status") { }
+        key(SK1; "ShipStation Order ID", "ShipStation Order Key", "ShipStation Status") { }
     }
 
     procedure GetShippingAgentName(ShippingAgentCode: Code[10]): Text[50]

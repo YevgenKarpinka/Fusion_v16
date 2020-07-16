@@ -68,11 +68,6 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                     ApplicationArea = All;
 
                 }
-                field("ShipStation Order Status"; "ShipStation Order Status")
-                {
-                    ApplicationArea = All;
-
-                }
                 field("ShipStation Status"; "ShipStation Status")
                 {
                     ApplicationArea = All;
