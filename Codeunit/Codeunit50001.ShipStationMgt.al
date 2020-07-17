@@ -1270,6 +1270,58 @@ codeunit 50001 "ShipStation Mgt."
         exit(true);
     end;
 
+    procedure GetCarriersFromShipStationToUpdate()
+    var
+        _SA: Record "Shipping Agent";
+        JSText: Text;
+        JSObject: JsonObject;
+        CarriersJSArray: JsonArray;
+        CarrierToken: JsonToken;
+        Counter: Integer;
+        txtCarrierCode: Text[20];
+    begin
+        JSText := Connect2ShipStation(4, '', '');
+
+        CarriersJSArray.ReadFrom(JSText);
+        _SA.SetCurrentKey("SS Code");
+        foreach CarrierToken in CarriersJSArray do begin
+            txtCarrierCode := CopyStr(GetJSToken(CarrierToken.AsObject(), 'code').AsValue().AsText(), 1, MaxStrLen(_SA."SS Code"));
+            _SA.SetRange("SS Code", txtCarrierCode);
+            if not _SA.FindFirst() then
+                _SA.InsertCarrierFromShipStation(GetLastCarrierCode(), CopyStr(GetJSToken(CarrierToken.AsObject(), 'name').AsValue().AsText(), 1, MaxStrLen(_SA.Name)),
+                                                           txtCarrierCode, GetJSToken(CarrierToken.AsObject(), 'shippingProviderId').AsValue().AsInteger());
+            GetServicesFromShipStationToUpdate(txtCarrierCode);
+        end;
+    end;
+
+    procedure GetServicesFromShipStationToUpdate(_SSAgentCode: Text[20])
+    var
+        JSText: Text;
+        JSObject: JsonObject;
+        CarriersJSArray: JsonArray;
+        CarrierToken: JsonToken;
+        Counter: Integer;
+        ShippingAgentServices: Record "Shipping Agent Services";
+        _SSCode: Text[50];
+    begin
+        JSText := Connect2ShipStation(5, '', _SSAgentCode);
+
+        CarriersJSArray.ReadFrom(JSText);
+        with ShippingAgentServices do begin
+            SetCurrentKey("SS Carrier Code", "SS Code");
+            foreach CarrierToken in CarriersJSArray do begin
+                _SSAgentCode := CopyStr(GetJSToken(CarrierToken.AsObject(), 'carrierCode').AsValue().AsText(), 1, MaxStrLen(ShippingAgentServices."SS Carrier Code"));
+                _SSCode := CopyStr(GetJSToken(CarrierToken.AsObject(), 'code').AsValue().AsText(), 1, MaxStrLen(ShippingAgentServices."SS Code"));
+
+                SetRange("SS Carrier Code", _SSAgentCode);
+                SetRange("SS Code", _SSCode);
+                if not FindFirst() then
+                    InsertServicesFromShipStation(GetCarrierCodeBySSAgentCode(_SSAgentCode), GetLastCarrierServiceCode(GetCarrierCodeBySSAgentCode(_SSAgentCode)), _SSAgentCode, _SSCode,
+                                                  CopyStr(GetJSToken(CarrierToken.AsObject(), 'name').AsValue().AsText(), 1, MaxStrLen(ShippingAgentServices.Description)));
+            end;
+        end;
+    end;
+
     local procedure GetLastCarrierCode(): Code[10]
     var
         ShippingAgent: Record "Shipping Agent";
@@ -1382,8 +1434,10 @@ codeunit 50001 "ShipStation Mgt."
         _SA: Record "Shipping Agent";
     begin
         // GetCarriersFromShipStation(_SA, _SAS);
-        if Confirm(confUpdateCarriersList, false, _SA.TableCaption) then
-            GetCarriersFromShipStation();
+        if Confirm(confUpdateCarriersList, false, _SA.TableCaption) then begin
+            GetCarriersFromShipStationToUpdate();
+            Message(msgCarriersListUpdated, _SA.TableCaption);
+        end;
     end;
 
     procedure InitShippingAmount()
@@ -1512,6 +1566,7 @@ codeunit 50001 "ShipStation Mgt."
         lblAwaitingShipment: Label 'awaiting_shipment';
         lblShipped: Label 'shipped';
         confUpdateCarriersList: TextConst ENU = 'Update the list %1?', RUS = 'Обновить список %1?';
+        msgCarriersListUpdated: TextConst ENU = '%1 list updated', RUS = 'Обновить список %1?';
         errorWhseShipNotExist: TextConst ENU = 'Warehouse Shipment is not Created for Sales Order = %1!', RUS = 'Для Заказа продажи = %1 не создана Складская отгрузка!';
         _shippedStatus: TextConst ENU = 'Shipped', RUS = 'Отгружен';
         _assemblededStatus: TextConst ENU = 'Assembled', RUS = 'Собран';
