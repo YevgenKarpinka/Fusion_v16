@@ -76,11 +76,11 @@ pageextension 50003 "Sales Order List Ext." extends "Sales Order List"
                     begin
                         CurrPage.SetSelectionFilter(_SH);
                         _SH.SetRange(Status, _SH.Status::Released);
-                        _SH.SetFilter("ShipStation Order Key", '=%1', '');
+                        // _SH.SetFilter("ShipStation Order Key", '=%1', '');
                         if _SH.FindSet(false, false) then
                             repeat
-                                if (_SH.Status = _SH.Status::Released) and (_SH."ShipStation Order Key" = '') then
-                                    ShipStationMgt.CreateOrderInShipStation(_SH."No.");
+                                // if (_SH.Status = _SH.Status::Released) and (_SH."ShipStation Order Key" = '') then
+                                ShipStationMgt.CreateOrderInShipStation(_SH."No.");
                             until _SH.Next() = 0;
                         Message(lblOrdersCreated);
                     end;

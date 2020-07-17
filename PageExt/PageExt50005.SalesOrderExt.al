@@ -163,7 +163,8 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                     ApplicationArea = All;
                     CaptionML = ENU = 'Create Order', RUS = 'Создать Заказ';
                     Image = CreateDocuments;
-                    Visible = (Status = Status::Released) and ("ShipStation Order Key" = '');
+                    Visible = (Status = Status::Released)
+                                and ("ShipStation Shipment ID" = '');
 
                     trigger OnAction()
                     var
@@ -208,7 +209,9 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                     ApplicationArea = All;
                     CaptionML = ENU = 'Create Label', RUS = 'Создать бирку';
                     Image = PrintReport;
-                    Visible = "ShipStation Order Key" <> '';
+                    Visible = ("ShipStation Order ID" <> '')
+                                and ("ShipStation Shipment ID" = '')
+                                and (Status = Status::Released);
 
                     trigger OnAction()
                     var
@@ -217,7 +220,7 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                         lblLabelCreated: TextConst ENU = 'Label Created and Attached to Warehouse Shipment!',
                                                     RUS = 'Бирка создана и прикреплена к Отгрузке!';
                     begin
-                        if "ShipStation Order Key" = '' then Error(salesOrderNotRegisterInShipStation, "No.");
+                        // if "ShipStation Order Key" = '' then Error(salesOrderNotRegisterInShipStation, "No.");
 
                         CurrPage.SetSelectionFilter(_SH);
                         if _SH.FindSet(false, false) then
@@ -232,16 +235,16 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                     ApplicationArea = All;
                     CaptionML = ENU = 'Void Label', RUS = 'Отменить бирку';
                     Image = VoidCreditCard;
-                    Visible = "ShipStation Shipment ID" <> '';
+                    Visible = ("ShipStation Shipment ID" <> '') and ("ShipStation Order ID" <> '');
 
                     trigger OnAction()
                     var
                         ShipStationMgt: Codeunit "ShipStation Mgt.";
                         _SH: Record "Sales Header";
                         lblLabelVoided: TextConst ENU = 'Label Voided!',
-                                                    RUS = 'Бирка отменена!';
+                                                  RUS = 'Бирка отменена!';
                     begin
-                        if "ShipStation Order Key" = '' then Error(salesOrderNotRegisterInShipStation, "No.");
+                        // if "ShipStation Order Key" = '' then Error(salesOrderNotRegisterInShipStation, "No.");
 
                         CurrPage.SetSelectionFilter(_SH);
                         if _SH.FindSet(false, false) then

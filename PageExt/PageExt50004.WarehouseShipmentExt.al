@@ -3,6 +3,17 @@ pageextension 50004 "Warehouse Shipment Ext." extends "Warehouse Shipment"
     layout
     {
         // Add changes to page layout here
+        addbefore("No.")
+        {
+            field(CustomerName; ShipStationMgt.GetCustomerNameFromWhseShipment("No."))
+            {
+                ApplicationArea = All;
+                CaptionML = ENU = 'Customer Name',
+                            RUS = 'Имя клиента';
+                toolTipML = ENU = 'Specifies customer name the warehouse shipment document.',
+                            RUS = 'Определяет имя клиента документа складской отгрузки.';
+            }
+        }
         addfirst(factboxes)
         {
             part("Work Description"; "Work Description FactBox")
@@ -26,4 +37,7 @@ pageextension 50004 "Warehouse Shipment Ext." extends "Warehouse Shipment"
     {
         // Add changes to page actions here
     }
+
+    var
+        ShipStationMgt: Codeunit "ShipStation Mgt.";
 }

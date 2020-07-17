@@ -1464,6 +1464,38 @@ codeunit 50001 "ShipStation Mgt."
             end;
     end;
 
+    procedure GetCustomerNameFromWhseShipment(WhseShipmentNo: Code[20]): Text
+    var
+        WhseShipmentLine: Record "Warehouse Shipment Line";
+        SalesHeader: Record "Sales Header";
+    begin
+        with WhseShipmentLine do begin
+            SetRange("No.", WhseShipmentNo);
+            FindFirst();
+        end;
+
+        with SalesHeader do begin
+            Get("Document Type"::Order, WhseShipmentLine."Source No.");
+            exit("Sell-to Customer Name");
+        end;
+    end;
+
+    procedure GetCustomerNameFromWhsePick(WhsePickNo: Code[20]): Text
+    var
+        WhseActivityLine: Record "Warehouse Activity Line";
+        SalesHeader: Record "Sales Header";
+    begin
+        with WhseActivityLine do begin
+            SetRange("No.", WhsePickNo);
+            FindFirst();
+        end;
+
+        with SalesHeader do begin
+            Get("Document Type"::Order, WhseActivityLine."Source No.");
+            exit("Sell-to Customer Name");
+        end;
+    end;
+
     var
         glShipStationSetup: Record "ShipStation Setup";
         testMode: Boolean;
