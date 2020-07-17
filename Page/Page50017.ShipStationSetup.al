@@ -30,8 +30,23 @@ page 50017 "ShipStation Setup"
         }
     }
 
-    var
-        isEditable: Boolean;
+    actions
+    {
+        area(Processing)
+        {
+            action(UpdateCarriers)
+            {
+                ApplicationArea = All;
+                CaptionML = ENU = 'Update Carriers and Services',
+                            RUS = 'Обновить услуги доставки';
+
+                trigger OnAction()
+                begin
+                    ShipStationMgt.UpdateCarriersAndServices();
+                end;
+            }
+        }
+    }
 
     trigger OnOpenPage()
     begin
@@ -42,4 +57,8 @@ page 50017 "ShipStation Setup"
         end;
         isEditable := "ShipStation Integration Enable";
     end;
+
+    var
+        ShipStationMgt: Codeunit "ShipStation Mgt.";
+        isEditable: Boolean;
 }

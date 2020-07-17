@@ -1352,7 +1352,7 @@ codeunit 50001 "ShipStation Mgt."
         // Update Carriers And Services
         // UpdateCarriersAndServices(_SA, _SAS);
 
-        UpdateCarriersAndServices();
+        // UpdateCarriersAndServices();
         // Init Shipping Amount
         InitShippingAmount();
         // Get Rates By Carrier From ShipStation
@@ -1496,7 +1496,14 @@ codeunit 50001 "ShipStation Mgt."
         end;
     end;
 
+    procedure CreateDeliverySalesLine(SalesOrderNo: Code[20]; customerNo: Code[20])
+    begin
+        ICExtended.CreateDeliverySalesLine(SalesOrderNo, customerNo);
+        ICExtended.CreateItemChargeAssgnt(SalesOrderNo, customerNo);
+    end;
+
     var
+        ICExtended: codeunit "IC Extended";
         glShipStationSetup: Record "ShipStation Setup";
         testMode: Boolean;
         errCarrierIsNull: TextConst ENU = 'Not Carrier Into ShipStation In Order = %1', RUS = 'В Заказе = %1 ShipStation не оппределен Перевозчик';
