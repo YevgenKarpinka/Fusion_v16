@@ -220,8 +220,6 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                         lblLabelCreated: TextConst ENU = 'Label Created and Attached to Warehouse Shipment!',
                                                     RUS = 'Бирка создана и прикреплена к Отгрузке!';
                     begin
-                        // if "ShipStation Order Key" = '' then Error(salesOrderNotRegisterInShipStation, "No.");
-
                         CurrPage.SetSelectionFilter(_SH);
                         if _SH.FindSet(false, false) then
                             repeat
@@ -244,8 +242,6 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                         lblLabelVoided: TextConst ENU = 'Label Voided!',
                                                   RUS = 'Бирка отменена!';
                     begin
-                        // if "ShipStation Order Key" = '' then Error(salesOrderNotRegisterInShipStation, "No.");
-
                         CurrPage.SetSelectionFilter(_SH);
                         if _SH.FindSet(false, false) then
                             repeat

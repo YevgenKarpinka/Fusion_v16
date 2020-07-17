@@ -66,23 +66,27 @@ pageextension 50003 "Sales Order List Ext." extends "Sales Order List"
                     ApplicationArea = All;
                     CaptionML = ENU = 'Create Orders', RUS = 'Создать Заказы';
                     Image = CreateDocuments;
-                    // Visible = (Status = Status::Released) and ("ShipStation Order Key" = '');
 
                     trigger OnAction()
                     var
                         ShipStationMgt: Codeunit "ShipStation Mgt.";
                         _SH: Record "Sales Header";
-                        lblOrdersCreated: TextConst ENU = 'Orders Created in ShipStation!', RUS = 'Заказы в ShipStation созданы!';
+                        lblOrdersCreated: TextConst ENU = 'Orders Created in ShipStation!',
+                                                    RUS = 'Заказы в ShipStation созданы!';
+                        lblOrdersToCreate: TextConst ENU = 'No Orders To Create!',
+                                                    RUS = 'Нет заказов для создания!';
                     begin
                         CurrPage.SetSelectionFilter(_SH);
                         _SH.SetRange(Status, _SH.Status::Released);
-                        // _SH.SetFilter("ShipStation Order Key", '=%1', '');
-                        if _SH.FindSet(false, false) then
+                        _SH.SetFilter("ShipStation Shipment ID", '=%1', '');
+                        if _SH.FindSet(false, false) then begin
                             repeat
-                                // if (_SH.Status = _SH.Status::Released) and (_SH."ShipStation Order Key" = '') then
                                 ShipStationMgt.CreateOrderInShipStation(_SH."No.");
                             until _SH.Next() = 0;
-                        Message(lblOrdersCreated);
+                            Message(lblOrdersCreated);
+                            exit;
+                        end;
+                        Message(lblOrdersToCreate);
                     end;
                 }
                 action("Create Labels")
@@ -90,7 +94,6 @@ pageextension 50003 "Sales Order List Ext." extends "Sales Order List"
                     ApplicationArea = All;
                     CaptionML = ENU = 'Create Labels', RUS = 'Создать бирки';
                     Image = PrintReport;
-                    // Visible = "ShipStation Order Key" <> '';
 
                     trigger OnAction()
                     var
@@ -98,22 +101,28 @@ pageextension 50003 "Sales Order List Ext." extends "Sales Order List"
                         _SH: Record "Sales Header";
                         lblLabelsCreated: TextConst ENU = 'Labels Created and Attached to Warehouse Shipments!',
                                                     RUS = 'Бирки созданы и прикреплены к Отгрузкам!';
+                        lblNotOrdersForLabelsCreating: TextConst ENU = 'There are no orders to create labels!',
+                                                    RUS = 'Нет заказов для создания бирок!';
                     begin
                         CurrPage.SetSelectionFilter(_SH);
-                        _SH.SetFilter("ShipStation Order Key", '<>%1', '');
-                        if _SH.FindSet(false, false) then
+                        _SH.SetRange(Status, _SH.Status::Released);
+                        _SH.SetFilter("ShipStation Order ID", '<>%1', '');
+                        _SH.SetFilter("ShipStation Shipment ID", '=%1', '');
+                        if _SH.FindSet(false, false) then begin
                             repeat
                                 if _SH."ShipStation Order Key" <> '' then
                                     ShipStationMgt.CreateLabel2OrderInShipStation(_SH."No.");
                             until _SH.Next() = 0;
-                        Message(lblLabelsCreated);
+                            Message(lblLabelsCreated);
+                            exit;
+                        end;
+                        Message(lblNotOrdersForLabelsCreating);
                     end;
                 }
                 action("Void Labels")
                 {
                     ApplicationArea = All;
                     Image = VoidCreditCard;
-                    // Visible = "ShipStation Shipment ID" <> '';
 
                     trigger OnAction()
                     var
@@ -121,14 +130,20 @@ pageextension 50003 "Sales Order List Ext." extends "Sales Order List"
                         _SH: Record "Sales Header";
                         lblLabelsVoided: TextConst ENU = 'Labels Voided!',
                                                     RUS = 'Бирки отменены!';
+                        lblNotLabelsForVoid: TextConst ENU = 'No cancellation labels!',
+                                                    RUS = 'Нет бирок для отмены!';
                     begin
                         CurrPage.SetSelectionFilter(_SH);
                         _SH.SetFilter("ShipStation Shipment ID", '<>%1', '');
-                        if _SH.FindSet(false, false) then
+                        _SH.SetFilter("ShipStation Order ID", '<>%1', '');
+                        if _SH.FindSet(false, false) then begin
                             repeat
                                 ShipStationMgt.VoidLabel2OrderInShipStation(_SH."No.");
                             until _SH.Next() = 0;
-                        Message(lblLabelsVoided);
+                            Message(lblLabelsVoided);
+                            exit;
+                        end;
+                        Message(lblNotLabelsForVoid);
                     end;
                 }
             }
