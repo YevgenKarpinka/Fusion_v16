@@ -33,33 +33,33 @@ pageextension 50004 "Warehouse Shipment Ext." extends "Warehouse Shipment"
         }
     }
 
-    // actions
-    // {
-    //     // Add changes to page actions here
-    //     modify("Create Pick")
-    //     {
-    //         Visible = false;
-    //     }
-    //     addbefore("Create Pick")
-    //     {
-    //         action("Create Pick Aveilable")
-    //         {
-    //             ApplicationArea = Warehouse;
-    //             Caption = 'Create Pick';
-    //             Ellipsis = true;
-    //             Image = CreateInventoryPickup;
-    //             Promoted = true;
-    //             PromotedCategory = Process;
-    //             ToolTip = 'Create a warehouse pick for the items to be shipped.';
+    actions
+    {
+        // Add changes to page actions here
+        modify("Create Pick")
+        {
+            Visible = false;
+        }
+        addbefore("Create Pick")
+        {
+            action("Create Pick Aveilable")
+            {
+                ApplicationArea = Warehouse;
+                Caption = 'Create Pick';
+                Ellipsis = true;
+                Image = CreateInventoryPickup;
+                Promoted = true;
+                PromotedCategory = Process;
+                ToolTip = 'Create a warehouse pick for the items to be shipped.';
 
-    //             trigger OnAction()
-    //             begin
-    //                 CurrPage.Update(true);
-    //                 CurrPage.WhseShptLines.PAGE.PickCreateAvailable;
-    //             end;
-    //         }
-    //     }
-    // }
+                trigger OnAction()
+                begin
+                    CurrPage.Update(true);
+                    CurrPage.WhseShptLines.PAGE.PickCreateAvailable;
+                end;
+            }
+        }
+    }
 
     var
         ShipStationMgt: Codeunit "ShipStation Mgt.";
