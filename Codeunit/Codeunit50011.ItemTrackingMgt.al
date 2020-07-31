@@ -74,20 +74,109 @@ codeunit 50011 "Item Tracking Mgt."
     // modify  "Whse.-Shpt Create Pick Avail" to "Whse.-Shpt Create Pick" after test
     [EventSubscriber(ObjectType::Report, Report::"Whse.-Shpt Create Pick Avail", 'OnBeforeSortWhseActivHeaders', '', true, true)]
     local procedure HandleHideNothingToHandleError(var WhseActivHeader: Record "Warehouse Activity Header"; var HideNothingToHandleError: Boolean)
+    var
+        WhseMoveNo: Code[20];
     begin
         if AllCompletePicked(WhseActivHeader) then exit;
 
         if WhseActivHeader.FindSet(false, false) then
             repeat
-                if not CompletePicked(WhseActivHeader."No.") then
-                    WhsePickToWhseMove(WhseActivHeader."No.");
+                if not CompletePicked(WhseActivHeader."No.") then begin
+                    WhsePickToWhseMove(WhseActivHeader."No.", WhseMoveNo);
+                    UpdateMoveLines(WhseMoveNo);
+                end;
                 WhseActivHeader.Delete(true);
             until WhseActivHeader.Next() = 0;
 
         // to do update warehouse pick serial no. line
 
         HideNothingToHandleError := true;
-        Message(msgWhseMoveCreated, WhseActivHeader."No.");
+        Message(msgWhseMoveCreated, WhseMoveNo);
+    end;
+
+    local procedure UpdateMoveLines(WhseMoveNo: Code[20])
+    var
+        WhseMoveLine: Record "Warehouse Activity Line";
+        // WhseMoveLineForDelete: Record "Warehouse Activity Line";
+        tempItem: Record Item temporary;
+        ToBinCode: Code[20];
+        ToZoneCode: Code[20];
+        LineNoForDelete: Integer;
+        QtyToMove: Decimal;
+    begin
+        // create item list to whse move
+        with WhseMoveLine do begin
+            SetCurrentKey("Action Type", "Bin Code", "Item No.");
+            SetRange("Activity Type", "Activity Type"::Movement);
+            SetRange("No.", WhseMoveNo);
+            SetRange("Action Type", "Action Type"::Take);
+            SetRange("Bin Code", '');
+            if FindSet(false, false) then
+                repeat
+                    if not tempItem.Get("Item No.") then begin
+                        tempItem."No." := "Item No.";
+                        tempItem.Insert();
+                    end;
+                until Next() = 0;
+        end;
+
+        if tempItem.FindFirst() then begin
+            // WhseMoveLine.Reset();
+            repeat
+                // get ToBin from Take where Bin Code exist
+                ToBinCode := '';
+                ToZoneCode := '';
+                LineNoForDelete := 0;
+
+                with WhseMoveLine do begin
+                    // SetCurrentKey("Action Type", "Bin Code", "Item No.");
+                    // SetRange("Activity Type", "Activity Type"::Movement);
+                    // SetRange("No.", WhseMoveNo);
+                    // SetRange("Action Type", "Action Type"::Take);
+                    SetFilter("Bin Code", '<>%1', '');
+                    SetRange("Item No.", tempItem."No.");
+                    if FindFirst() then begin
+                        ToBinCode := "Bin Code";
+                        ToZoneCode := "Zone Code";
+                        LineNoForDelete := "Line No.";
+                        QtyToMove += Quantity;
+                    end;
+                end;
+
+                // modify Place record
+                with WhseMoveLine do begin
+                    // SetCurrentKey("Action Type", "Bin Code", "Item No.");
+                    // SetRange("Activity Type", "Activity Type"::Movement);
+                    // SetRange("No.", WhseMoveNo);
+                    SetFilter("Line No.", '<>%1', LineNoForDelete + 10000);
+                    SetRange("Action Type", "Action Type"::Place);
+                    // SetFilter("Bin Code", '<>%1', '');
+                    // SetRange("Item No.", tempItem."No.");
+                    if FindSet(false, true) then
+                        repeat
+                            Validate("Zone Code", ToZoneCode);
+                            Validate("Bin Code", ToBinCode);
+                            Modify();
+                        until Next() = 0;
+                end;
+
+                // delete record completted for pick
+                if LineNoForDelete <> 0 then
+                    with WhseMoveLine do begin
+                        Reset();
+                        SetRange("Activity Type", "Activity Type"::Movement);
+                        SetRange("No.", WhseMoveNo);
+                        SetRange("Line No.", LineNoForDelete, LineNoForDelete + 10000);
+                        if FindSet(false, false) then
+                            repeat
+                                Delete(); // to ensure correct item tracking update
+                                DeleteBinContent("Action Type"::Place);
+                                UpdateRelatedItemTrkg(WhseMoveLine);
+                            until Next() = 0;
+                    end;
+
+            until tempItem.Next() = 0;
+        end;
     end;
 
     local procedure AllCompletePicked(var WhsePickHeader: Record "Warehouse Activity Header"): Boolean
@@ -122,7 +211,7 @@ codeunit 50011 "Item Tracking Mgt."
         end;
     end;
 
-    local procedure WhsePickToWhseMove(WhsePickNo: Code[20])
+    local procedure WhsePickToWhseMove(WhsePickNo: Code[20]; var WhseMoveNo: code[20])
     var
         WhsePickHeader: Record "Warehouse Activity Header";
         WhsePickLine: Record "Warehouse Activity Line";
@@ -150,6 +239,7 @@ codeunit 50011 "Item Tracking Mgt."
                 WhseMoveLine.Insert(true);
             until Next() = 0;
         end;
+        WhseMoveNo := WhseMoveHeader."No.";
     end;
 
     local procedure GetLocation(LocationCode: Code[20]);
