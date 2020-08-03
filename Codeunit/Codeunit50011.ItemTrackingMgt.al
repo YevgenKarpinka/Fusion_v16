@@ -73,7 +73,7 @@ codeunit 50011 "Item Tracking Mgt."
 
     // modify  "Whse.-Shpt Create Pick Avail" to "Whse.-Shpt Create Pick" after test
     [EventSubscriber(ObjectType::Report, Report::"Whse.-Shpt Create Pick Avail", 'OnBeforeSortWhseActivHeaders', '', true, true)]
-    local procedure HandleHideNothingToHandleError(var WhseActivHeader: Record "Warehouse Activity Header"; var HideNothingToHandleError: Boolean)
+    local procedure HandleHideNothingToHandleError(FirstActivityNo: Code[20]; LastActivityNo: Code[20]; var WhseActivHeader: Record "Warehouse Activity Header"; var HideNothingToHandleError: Boolean)
     var
         WhseMoveNo: Code[20];
     begin
@@ -90,6 +90,8 @@ codeunit 50011 "Item Tracking Mgt."
 
         // to do update warehouse pick serial no. line
 
+        FirstActivityNo := '';
+        LastActivityNo := '';
         HideNothingToHandleError := true;
         Message(msgWhseMoveCreated, WhseMoveNo);
     end;
