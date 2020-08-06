@@ -26,15 +26,6 @@ page 50015 "Item Tracking Line FactBox"
                 {
                     ApplicationArea = All;
                 }
-                // field("Serial No."; ReservEntryLotNo."Serial No.")
-                // {
-                //     ApplicationArea = All;
-                // }
-                // field("Warranty Date"; itemTrackingMgt.GetItemTrackingWarrantyDateByLotNo(ReservEntryLotNo."Lot No.", "Item No."))
-                // {
-                //     ApplicationArea = All;
-                // }
-
             }
         }
     }
@@ -45,6 +36,6 @@ page 50015 "Item Tracking Line FactBox"
 
     trigger OnAfterGetRecord()
     begin
-        ReservEntryLotNo.Get("Entry No.", true);
+        if ReservEntryLotNo.Get("Entry No.", true) then;
     end;
 }

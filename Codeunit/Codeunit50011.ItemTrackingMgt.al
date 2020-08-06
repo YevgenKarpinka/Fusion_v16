@@ -73,7 +73,7 @@ codeunit 50011 "Item Tracking Mgt."
 
     // modify  "Whse.-Shpt Create Pick Avail" to "Whse.-Shpt Create Pick" after test
     [EventSubscriber(ObjectType::Report, Report::"Whse.-Shpt Create Pick Avail", 'OnBeforeSortWhseActivHeaders', '', true, true)]
-    local procedure HandleHideNothingToHandleError(FirstActivityNo: Code[20]; LastActivityNo: Code[20]; var WhseActivHeader: Record "Warehouse Activity Header"; var HideNothingToHandleError: Boolean)
+    local procedure HandleHideNothingToHandleError(var FirstActivityNo: Code[20]; var LastActivityNo: Code[20]; var WhseActivHeader: Record "Warehouse Activity Header"; var HideNothingToHandleError: Boolean)
     var
         WhseMoveNo: Code[20];
     begin
@@ -452,7 +452,7 @@ codeunit 50011 "Item Tracking Mgt."
         PlaceLineNo: Integer;
         msgWhseMoveCreated: TextConst ENU = 'Warehouse Movement %1 created.',
                                       RUS = 'Складское передвижение %1 создано.';
-        cnfCreateWahseMove: TextConst ENU = 'Create Warehouse Move?',
+        cnfCreateWahseMove: TextConst ENU = 'Create Warehouse Movement?',
                                       RUS = 'Создать Складское передвижение?';
         errNoEmptyBinForPick: TextConst ENU = 'No Empty Bin For Pick. Location %1. Zona %2.',
                                       RUS = 'Нет свбодных ячеек для подбора. Склад %1. Зона %2.';

@@ -368,7 +368,7 @@ report 50005 "Whse.-Shpt Create Pick Avail"
     end;
 
     [IntegrationEvent(false, false)]
-    local procedure OnBeforeSortWhseActivHeaders(var WhseActivHeader: Record "Warehouse Activity Header"; FirstActivityNo: Code[20]; LastActivityNo: Code[20]; var HideNothingToHandleError: Boolean)
+    local procedure OnBeforeSortWhseActivHeaders(var WhseActivHeader: Record "Warehouse Activity Header"; var FirstActivityNo: Code[20]; var LastActivityNo: Code[20]; var HideNothingToHandleError: Boolean)
     begin
     end;
 }

@@ -1525,7 +1525,7 @@ codeunit 50001 "ShipStation Mgt."
     begin
         with WhseShipmentLine do begin
             SetRange("No.", WhseShipmentNo);
-            FindFirst();
+            if not FindFirst() then exit('');
         end;
 
         with SalesHeader do begin
@@ -1541,7 +1541,7 @@ codeunit 50001 "ShipStation Mgt."
     begin
         with WhseActivityLine do begin
             SetRange("No.", WhsePickNo);
-            FindFirst();
+            if not FindFirst() then exit('');
         end;
 
         with SalesHeader do begin
