@@ -14,31 +14,37 @@ page 50015 "Item Tracking Line FactBox"
         {
             repeater("Item Tracking List")
             {
-                field("Lot No."; "Lot No.")
+                field("Lot No."; ReservEntryLotNo."Lot No.")
                 {
                     ApplicationArea = All;
                 }
-                field("Expiration Date"; itemTrackingMgt.GetItemTrackingExpirationDateByLotNo("Lot No.", "Item No."))
+                field("Expiration Date"; itemTrackingMgt.GetItemTrackingExpirationDateByLotNo(ReservEntryLotNo."Lot No.", "Item No."))
                 {
                     ApplicationArea = All;
                 }
-                field(Quantity; Quantity * -1)
+                field(Quantity; ReservEntryLotNo.Quantity)
                 {
                     ApplicationArea = All;
                 }
-                field("Serial No."; "Serial No.")
-                {
-                    ApplicationArea = All;
-                }
-                field("Warranty Date"; itemTrackingMgt.GetItemTrackingWarrantyDateByLotNo("Lot No.", "Item No."))
-                {
-                    ApplicationArea = All;
-                }
+                // field("Serial No."; ReservEntryLotNo."Serial No.")
+                // {
+                //     ApplicationArea = All;
+                // }
+                // field("Warranty Date"; itemTrackingMgt.GetItemTrackingWarrantyDateByLotNo(ReservEntryLotNo."Lot No.", "Item No."))
+                // {
+                //     ApplicationArea = All;
+                // }
 
             }
         }
     }
 
     var
+        ReservEntryLotNo: Record "Reservation Entry";
         itemTrackingMgt: Codeunit "Item Tracking Mgt.";
+
+    trigger OnAfterGetRecord()
+    begin
+        ReservEntryLotNo.Get("Entry No.", true);
+    end;
 }
