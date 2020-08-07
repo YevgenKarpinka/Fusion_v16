@@ -42,15 +42,16 @@ pageextension 50004 "Warehouse Shipment Ext." extends "Warehouse Shipment"
         }
         addbefore("Create Pick")
         {
-            action("Create Pick Aveilable")
+            action("Create Pick Available")
             {
                 ApplicationArea = Warehouse;
-                Caption = 'Create Pick';
+                CaptionML = ENU = 'Create Pick or Movement',
+                            RUS = 'Создать подбор или передвижение';
                 Ellipsis = true;
                 Image = CreateInventoryPickup;
                 Promoted = true;
                 PromotedCategory = Process;
-                ToolTip = 'Create a warehouse pick for the items to be shipped.';
+                ToolTip = 'Create a warehouse pick for the items to be shipped or warehouse movement.';
 
                 trigger OnAction()
                 begin

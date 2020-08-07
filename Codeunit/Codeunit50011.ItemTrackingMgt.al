@@ -188,6 +188,7 @@ codeunit 50011 "Item Tracking Mgt."
                                 ReservationEntryLotNo.Get(ReservationEntry."Entry No.", true);
                                 if ReservationEntryLotNo."Item Tracking" = ReservationEntryLotNo."Item Tracking"::"Lot No." then begin
                                     // find FromBin
+                                    BinContent.SetFilter("Zone Code", CreatePick.GetBinTypeFilter(4)); //put away only
                                     BinContent.SetRange("Lot No.", ReservationEntryLotNo."Lot No.");
                                     if BinContent.FindFirst() then begin
                                         "Lot No." := BinContent."Lot No.";
@@ -306,8 +307,8 @@ codeunit 50011 "Item Tracking Mgt."
             WhseMoveLineForSplit.Get("Activity Type", "No.", PlaceLineNo);
             WhseMoveLineForSplit."Lot No." := "Lot No.";
             WhseMoveLineForSplit."Expiration Date" := "Expiration Date";
-            // WhseMoveLineForSplit."Zone Code" := ToZoneCode;
-            // WhseMoveLineForSplit."Bin Code" := ToBinCode;
+            WhseMoveLineForSplit."Zone Code" := ToZoneCode;
+            WhseMoveLineForSplit."Bin Code" := ToBinCode;
             WhseMoveLineForSplit.Modify();
         end;
     end;
