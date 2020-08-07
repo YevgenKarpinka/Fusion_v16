@@ -36,6 +36,24 @@ pageextension 50004 "Warehouse Shipment Ext." extends "Warehouse Shipment"
     actions
     {
         // Add changes to page actions here
+        addafter("Pick Lines")
+        {
+            action("Movement Lines")
+            {
+                ApplicationArea = Warehouse;
+                CaptionML = ENU = 'Movement Lines',
+                            RUS = 'Строки передвижения';
+                Image = PickLines;
+                Promoted = true;
+                PromotedCategory = Process;
+                RunObject = Page "Warehouse Activity Lines";
+                RunPageLink = "Whse. Document Type" = CONST(Shipment),
+                                  "Whse. Document No." = FIELD("No.");
+                RunPageView = SORTING("Whse. Document No.", "Whse. Document Type", "Activity Type")
+                                  WHERE("Activity Type" = CONST(Movement));
+                ToolTip = 'View the related movements.';
+            }
+        }
         modify("Create Pick")
         {
             Visible = false;

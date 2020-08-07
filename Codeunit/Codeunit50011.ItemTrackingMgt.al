@@ -210,6 +210,9 @@ codeunit 50011 "Item Tracking Mgt."
                                             SplitLine(WhseMoveLineForSplit);
                                             WhseMoveLine.Copy(WhseMoveLineForSplit);
                                             Next();
+                                            "Lot No." := '';
+                                            "Expiration Date" := 0D;
+                                            Modify();
                                         end;
                                     end;
                                 end;
@@ -260,6 +263,8 @@ codeunit 50011 "Item Tracking Mgt."
               NewWhseActivLine."Item No.", NewWhseActivLine."Unit of Measure Code",
               NewWhseActivLine."Qty. to Handle", NewWhseActivLine.Cubage, NewWhseActivLine.Weight);
         end;
+        NewWhseActivLine."Lot No." := '';
+        NewWhseActivLine."Expiration Date" := 0D;
         NewWhseActivLine.Insert();
 
         WhseActivLine.Quantity := WhseActivLine."Qty. to Handle" + WhseActivLine."Qty. Handled";
