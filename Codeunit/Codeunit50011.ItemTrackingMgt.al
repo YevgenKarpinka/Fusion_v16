@@ -215,7 +215,7 @@ codeunit 50011 "Item Tracking Mgt."
                                         repeat
                                             QtyAvailableToTake := BinContent.CalcQtyAvailToTakeUOM();
                                             if (BinContent."Zone Code" = PutAwayFilter) and (QtyAvailableToTake > 0) then begin
-                                                "Lot No." := BinContent."Lot No.";
+                                                "Lot No." := ReservationEntryLotNo."Lot No.";
                                                 "Expiration Date" := ItemTrackingMgt.ExistingExpirationDate("Item No.", "Variant Code",
                                                     ReservationEntryLotNo."Lot No.", '', false, EntriesExist);
                                                 "Zone Code" := BinContent."Zone Code";
