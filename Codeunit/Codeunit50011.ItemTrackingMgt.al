@@ -1,5 +1,25 @@
 codeunit 50011 "Item Tracking Mgt."
 {
+    [EventSubscriber(ObjectType::Codeunit, codeunit::"Reservation Management", 'OnAutoReserveItemLedgEntryOnFindFirstItemLedgEntry', '', false, false)]
+    local procedure AddExpirationDateKey(var CalcItemLedgEntry: Record "Item Ledger Entry"; var InvSearch: Text[1]; var IsHandled: Boolean; var IsFound: Boolean)
+    var
+        Item: Record Item;
+        ItemTrackingCode: Record "Item Tracking Code";
+    begin
+        GetLocation(CalcItemLedgEntry.GetFilter("Location Code"));
+        if Location."Pick According to FEFO" then begin
+            CalcItemLedgEntry.SetCurrentKey("Item No.", Open, "Variant Code", Positive, "Location Code", "Expiration Date");
+            if Item.get(CalcItemLedgEntry.GetFilter("Item No."))
+                and (Item."Item Tracking Code" <> '')
+                and ItemTrackingCode.Get(Item."Item Tracking Code")
+                and ItemTrackingCode."Strict Expiration Posting" then
+                CalcItemLedgEntry.SetFilter("Expiration Date", '%1..', Today);
+            InvSearch := '-';
+            IsFound := CalcItemLedgEntry.FIND(InvSearch);
+            IsHandled := true;
+        end;
+    end;
+
     procedure GetItemTrackingSerialNo(ILE_EntryNo: Integer): Code[50]
     begin
         if GetILE(ILE_EntryNo) then
@@ -159,7 +179,6 @@ codeunit 50011 "Item Tracking Mgt."
                         if BinCodeFilter <> '' then
                             Bin.SetFilter(Code, '<>%1', BinCodeFilter);
                         Bin.SetRange(Empty, true);
-                        // Bin.FindFirst();
                         if not Bin.FindFirst() then
                             Error(errNoEmptyBinForPick, "Location Code", PickFilter);
                         ToBinCode := Bin.Code;
@@ -208,9 +227,7 @@ codeunit 50011 "Item Tracking Mgt."
                                     BinContent.SetRange("Item No.", "Item No.");
                                     BinContent.SetRange("Variant Code", "Variant Code");
                                     BinContent.SetRange("Unit of Measure Code", "Unit of Measure Code");
-                                    // BinContent.SetFilter("Zone Code", CreatePick.GetBinTypeFilter(4)); //put away only
                                     BinContent.SetFilter("Lot No. Filter", ReservationEntryLotNo."Lot No.");
-                                    // Ascending(false);
                                     if BinContent.FindSet(false, false) then begin
                                         repeat
                                             QtyAvailableToTake := BinContent.CalcQtyAvailToTakeUOM();
@@ -223,20 +240,13 @@ codeunit 50011 "Item Tracking Mgt."
                                                 Modify();
                                                 UpdatePlaceLine(WhseMoveLine, ToZoneCode, ToBinCode);
                                                 if QtyAvailableToTake > remReservQauntity then
-                                                    // calculate remaining qty
                                                     QtyAvailableToTake := remReservQauntity;
 
                                                 if QtyAvailableToTake < remQtytoMove then begin
-                                                    // calculate remaining qty
-                                                    // remQtytoMove -= QtyAvailableToTake;
                                                     if "Qty. to Handle" <> QtyAvailableToTake then begin
                                                         if "Qty. to Handle" > QtyAvailableToTake then begin
                                                             Validate("Qty. to Handle", QtyAvailableToTake);
                                                             Modify(true);
-                                                            // end
-                                                            // else begin
-                                                            //     Validate("Qty. to Handle", QtyAvailableToTake + remQtytoMove - "Qty. to Handle");
-                                                            //     Modify(true);
                                                         end;
                                                         if "Qty. to Handle" <> Quantity then begin
                                                             // split Place line for remaining quantity

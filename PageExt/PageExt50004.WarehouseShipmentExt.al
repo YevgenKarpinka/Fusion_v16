@@ -54,10 +54,10 @@ pageextension 50004 "Warehouse Shipment Ext." extends "Warehouse Shipment"
                 ToolTip = 'View the related movements.';
             }
         }
-        // modify("Create Pick")
-        // {
-        //     Visible = false;
-        // }
+        modify("Create Pick")
+        {
+            Visible = false;
+        }
         addbefore("Create Pick")
         {
             action("Create Pick Available")
