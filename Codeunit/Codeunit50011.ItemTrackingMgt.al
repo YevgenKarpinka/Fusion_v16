@@ -105,6 +105,7 @@ codeunit 50011 "Item Tracking Mgt."
                 if not CompletePicked(WhseActivHeader."No.") then begin
                     WhsePickToWhseMove(WhseActivHeader."No.", WhseMoveNo);
                     UpdateMoveLines(WhseMoveNo);
+                    RenumberLines(WhseMoveNo);
                 end;
                 WhseActivHeader.Delete(true);
             until WhseActivHeader.Next() = 0;
@@ -115,6 +116,33 @@ codeunit 50011 "Item Tracking Mgt."
         LastActivityNo := '';
         HideNothingToHandleError := true;
         Message(msgWhseMoveCreated, WhseMoveNo);
+    end;
+
+    local procedure RenumberLines(WhseMoveNo: Code[20]);
+    var
+        WhseMoveLine: Record "Warehouse Activity Line";
+        WhseMoveLineToUpdate: Record "Warehouse Activity Line";
+        LineNo: Integer;
+        LineNumber: Integer;
+    begin
+        with WhseMoveLineToUpdate do begin
+            SetCurrentKey("Source Line No.", "Item No.", "Expiration Date");
+            SetRange("Activity Type", "Activity Type"::Movement);
+            SetRange("No.", WhseMoveNo);
+            if FindLast() then begin
+                LineNo := 10000 * Count;
+                repeat
+                    WhseMoveLine := WhseMoveLineToUpdate;
+                    DELETE;
+                    WhseMoveLineToUpdate := WhseMoveLine;
+                    "Line No." := LineNo;
+                    INSERT;
+                    LineNo -= 10000;
+                until Next(-1) = 0;
+            end;
+        end;
+
+
     end;
 
     local procedure UpdateMoveLines(WhseMoveNo: Code[20])
