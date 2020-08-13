@@ -5,7 +5,14 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
         // Add changes to page layout here
         addfirst(factboxes)
         {
-            part(ItemTrackingEntries; "Item Tracking Entries FactBox")
+            // part(ItemTrackingEntries; "Item Tracking Entries FactBox")
+            // {
+            //     ApplicationArea = Basic, Suite;
+            //     Provider = SalesLines;
+            //     SubPageLink = "Item No." = field("No."), "Location Code" = field("Location Code"), "Variant Code" = field("Variant Code"), "Unit of Measure Code" = field("Unit of Measure Code");
+            //     SubPageView = sorting("Expiration Date") where(Open = const(true), Positive = const(true));
+            // }
+            part(ItemBinContent; "Item Bin Content FactBox")
             {
                 ApplicationArea = Basic, Suite;
                 Provider = SalesLines;
