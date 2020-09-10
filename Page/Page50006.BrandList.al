@@ -28,6 +28,11 @@ page 50006 "Brand List"
                     ApplicationArea = All;
 
                 }
+                field("Name RU"; "Name RU")
+                {
+                    ApplicationArea = All;
+
+                }
             }
         }
     }

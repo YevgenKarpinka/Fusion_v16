@@ -16,6 +16,10 @@ table 50001 "Brand"
         {
             DataClassification = CustomerContent;
         }
+        field(4; "Name RU"; Text[50])
+        {
+            DataClassification = CustomerContent;
+        }
     }
     keys
     {

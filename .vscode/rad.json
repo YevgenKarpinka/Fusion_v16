@@ -1,1 +1,1 @@
-﻿{"Added":[],"Modified":[{"Id":50024,"Kind":12,"Name":"Item Bin Content FactBox","PackagePath":"/src/Page/Page50024.ItemBinContentFactBox.al"},{"Id":50005,"Kind":16,"Name":"Sales Order Ext.","PackagePath":"/src/PageExt/PageExt50005.SalesOrderExt.al"}],"Removed":[]}
+﻿{"Added":[],"Modified":[{"Id":50001,"Kind":10,"Name":"Brand","PackagePath":"/src/Table/Table50001.Brand.al"},{"Id":50006,"Kind":12,"Name":"Brand List","PackagePath":"/src/Page/Page50006.BrandList.al"}],"Removed":[]}
