@@ -510,6 +510,7 @@ codeunit 50001 "ShipStation Mgt."
 
         _jsonObject.Add('id', _Manufacturer.Code);
         _jsonObject.Add('name', _Manufacturer.Name);
+        _jsonObject.Add('name_ru', _Manufacturer."Name RU"); // added 11/09/2020
 
         exit(_jsonObject)
     end;
@@ -523,6 +524,7 @@ codeunit 50001 "ShipStation Mgt."
 
         _jsonObject.Add('id', _Brand.Code);
         _jsonObject.Add('name', _Brand.Name);
+        _jsonObject.Add('name_ru', _Brand."Name RU"); // added 11/09/2020
 
         exit(_jsonObject)
     end;
@@ -545,6 +547,13 @@ codeunit 50001 "ShipStation Mgt."
                         _jsonItemFilterGroupArray.Add(_jsonItemFilterGroup);
                         _jsonItemFilters.Add(_jsonItemFilterGroup);
                         Clear(_jsonItemFilterGroup);
+                        // added 11/09/2020 >>
+                        _jsonItemFilterGroup.Add('name_ru', "Filter Group RUS");
+                        _jsonItemFilterGroup.Add('filters_ru', AddItemFilterGroupArray("Item No.", "Filter Group"));
+                        _jsonItemFilterGroupArray.Add(_jsonItemFilterGroup);
+                        _jsonItemFilters.Add(_jsonItemFilterGroup);
+                        Clear(_jsonItemFilterGroup);
+                        // added 11/09/2020 <<
                         _oldItemFilterGroup := "Filter Group";
                     end;
                 until Next() = 0;
@@ -563,6 +572,22 @@ codeunit 50001 "ShipStation Mgt."
             if FindSet(false, false) then
                 repeat
                     _jsonItemFilterGroupArray.Add("Filter Value");
+                until Next() = 0;
+        end;
+        exit(_jsonItemFilterGroupArray);
+    end;
+
+    local procedure AddItemFilterGroupRUArray(_ItemNo: Code[20]; _FilterGroup: Text[50]): JsonArray
+    var
+        _ItemFilterGroup: Record "Item Filter Group";
+        _jsonItemFilterGroupArray: JsonArray;
+    begin
+        with _ItemFilterGroup do begin
+            SetRange("Item No.", _ItemNo);
+            SetRange("Filter Group", _FilterGroup);
+            if FindSet(false, false) then
+                repeat
+                    _jsonItemFilterGroupArray.Add("Filter Value RUS");
                 until Next() = 0;
         end;
         exit(_jsonItemFilterGroupArray);
@@ -598,7 +623,7 @@ codeunit 50001 "ShipStation Mgt."
             0:
                 exit(0);
             else
-                if _Item.Inventory <= _Item."Warning Qty" then
+                if _Item.Inventory > _Item."Warning Qty" then
                     exit(1)
                 else
                     exit(2);
