@@ -5,7 +5,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
         // Add changes to page layout here
         addlast(Item)
         {
-            field("No. 2"; "No. 2")
+            field("No. 2"; Rec."No. 2")
             {
                 ApplicationArea = All;
                 Importance = Additional;
@@ -18,11 +18,11 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
                 CaptionML = ENU = 'Item Descriptions';
                 Editable = EditAllowed;
 
-                field("Manufacturer Code"; "Manufacturer Code")
+                field("Manufacturer Code"; Rec."Manufacturer Code")
                 {
                     ApplicationArea = All;
                 }
-                field("Brand Code"; "Brand Code")
+                field("Brand Code"; Rec."Brand Code")
                 {
                     ApplicationArea = All;
                 }
@@ -32,7 +32,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
@@ -42,7 +42,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
@@ -52,7 +52,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
@@ -62,7 +62,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
@@ -78,7 +78,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                         trigger OnValidate()
                         begin
-                            if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                            if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                             ItemDescription.BlobOnValidate(ItemDescription.FieldNo(Description), txtDescription);
                         end;
                     }
@@ -95,7 +95,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                         trigger OnValidate()
                         begin
-                            if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                            if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                             ItemDescription.BlobOnValidate(ItemDescription.FieldNo(Ingredients), txtIngredients);
                         end;
                     }
@@ -112,7 +112,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                         trigger OnValidate()
                         begin
-                            if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                            if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                             ItemDescription.BlobOnValidate(ItemDescription.FieldNo(Indications), txtIndications);
                         end;
                     }
@@ -129,7 +129,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                         trigger OnValidate()
                         begin
-                            if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                            if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                             ItemDescription.BlobOnValidate(ItemDescription.FieldNo(Directions), txtDirections);
                         end;
                     }
@@ -146,7 +146,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                         trigger OnValidate()
                         begin
-                            if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                            if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                             ItemDescription.BlobOnValidate(ItemDescription.FieldNo("Description RU"), txtDescriptionRU);
                         end;
                     }
@@ -163,7 +163,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                         trigger OnValidate()
                         begin
-                            if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                            if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                             ItemDescription.BlobOnValidate(ItemDescription.FieldNo("Ingredients RU"), txtIngredientsRU);
                         end;
                     }
@@ -180,7 +180,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                         trigger OnValidate()
                         begin
-                            if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                            if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                             ItemDescription.BlobOnValidate(ItemDescription.FieldNo("Indications RU"), txtIndicationsRU);
                         end;
                     }
@@ -197,7 +197,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                         trigger OnValidate()
                         begin
-                            if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                            if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                             ItemDescription.BlobOnValidate(ItemDescription.FieldNo("Directions RU"), txtDirectionsRU);
                         end;
                     }
@@ -214,7 +214,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                         trigger OnValidate()
                         begin
-                            if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                            if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                             ItemDescription.BlobOnValidate(ItemDescription.FieldNo(Warning), txtWarning);
                         end;
                     }
@@ -230,7 +230,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                         trigger OnValidate()
                         begin
-                            if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                            if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                             ItemDescription.BlobOnValidate(ItemDescription.FieldNo("Legal Disclaimer"), txtLegalDisclaimer);
                         end;
                     }
@@ -253,7 +253,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                         trigger OnValidate()
                         begin
-                            if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                            if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                             ItemDescription.BlobOnValidate(ItemDescription.FieldNo("Bullet Point 1"), txtBulletPoint1);
                         end;
                     }
@@ -270,7 +270,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                         trigger OnValidate()
                         begin
-                            if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                            if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                             ItemDescription.BlobOnValidate(ItemDescription.FieldNo("Bullet Point 2"), txtBulletPoint2);
                         end;
                     }
@@ -287,7 +287,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                         trigger OnValidate()
                         begin
-                            if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                            if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                             ItemDescription.BlobOnValidate(ItemDescription.FieldNo("Bullet Point 3"), txtBulletPoint3);
                         end;
                     }
@@ -304,7 +304,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                         trigger OnValidate()
                         begin
-                            if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                            if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                             ItemDescription.BlobOnValidate(ItemDescription.FieldNo("Bullet Point 4"), txtBulletPoint4);
                         end;
                     }
@@ -315,7 +315,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
@@ -331,7 +331,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                         trigger OnValidate()
                         begin
-                            if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                            if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                             ItemDescription.BlobOnValidate(ItemDescription.FieldNo("Bullet Point 1 RU"), txtBulletPoint1RU);
                         end;
                     }
@@ -348,7 +348,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                         trigger OnValidate()
                         begin
-                            if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                            if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                             ItemDescription.BlobOnValidate(ItemDescription.FieldNo("Bullet Point 2 RU"), txtBulletPoint2RU);
                         end;
                     }
@@ -365,7 +365,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                         trigger OnValidate()
                         begin
-                            if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                            if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                             ItemDescription.BlobOnValidate(ItemDescription.FieldNo("Bullet Point 3 RU"), txtBulletPoint3RU);
                         end;
                     }
@@ -382,7 +382,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                         trigger OnValidate()
                         begin
-                            if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                            if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                             ItemDescription.BlobOnValidate(ItemDescription.FieldNo("Bullet Point 3 RU"), txtBulletPoint4RU);
                         end;
                     }
@@ -393,7 +393,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
@@ -415,7 +415,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                         trigger OnValidate()
                         begin
-                            if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                            if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                             ItemDescription.BlobOnValidate(ItemDescription.FieldNo("Search Terms"), txtSearchTerms);
                         end;
                     }
@@ -433,7 +433,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
                         trigger OnValidate()
                         begin
                             if txtSearchTermsForGoogleOnly = '' then exit;
-                            if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                            if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                             ItemDescription.BlobOnValidate(ItemDescription.FieldNo("Search Terms for Google only"), txtSearchTermsForGoogleOnly);
                         end;
                     }
@@ -450,7 +450,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
@@ -460,7 +460,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
@@ -470,7 +470,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
@@ -480,15 +480,15 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
-                field("Baby Care"; "Baby Care")
+                field("Baby Care"; Rec."Baby Care")
                 {
                     ApplicationArea = All;
                 }
-                field("Web Item"; "Web Item")
+                field("Web Item"; Rec."Web Item")
                 {
                     ApplicationArea = All;
                 }
@@ -504,7 +504,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
@@ -514,7 +514,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
@@ -524,7 +524,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
@@ -534,7 +534,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
@@ -544,7 +544,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
@@ -554,7 +554,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
@@ -564,7 +564,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
@@ -574,7 +574,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
@@ -584,7 +584,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
@@ -594,7 +594,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
@@ -604,7 +604,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
@@ -614,15 +614,15 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
                     trigger OnValidate()
                     begin
-                        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+                        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
                         ItemDescriptionModify;
                     end;
                 }
-                field("Warning Qty"; "Warning Qty")
+                field("Warning Qty"; Rec."Warning Qty")
                 {
                     ApplicationArea = All;
                 }
-                field("Web Price"; "Web Price")
+                field("Web Price"; Rec."Web Price")
                 {
                     ApplicationArea = All;
                 }
@@ -645,7 +645,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
                     _ItemFilterGroup: Record "Item Filter Group";
                     itemFilterGroupList: Page "Item Filter Group List";
                 begin
-                    _ItemFilterGroup.SetRange("Item No.", "No.");
+                    _ItemFilterGroup.SetRange("Item No.", Rec."No.");
                     // Page.RunModal(Page::"Item Filter Group List", _ItemFilterGroup);
                     itemFilterGroupList.SetInit(true);
                     itemFilterGroupList.SetTableView(_ItemFilterGroup);
@@ -662,7 +662,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
     local procedure BlobOnAfterGetRec()
     begin
-        if (xRec."No." = "No.") then exit;
+        if (xRec."No." = Rec."No.") then exit;
         ItemDescriptionExist := false;
         EditAllowed := CurrPage.EDITABLE;
         Clear(txtWarning);
@@ -685,7 +685,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
         Clear(txtIngredientsRU);
         Clear(txtIndicationsRU);
         Clear(txtDirectionsRU);
-        if ItemDescription.Get("No.") then begin
+        if ItemDescription.Get(Rec."No.") then begin
             ItemDescriptionExist := true;
             ItemDescription.BlobOnAfterGetRec(ItemDescription.FieldNo(Warning), txtWarning);
             ItemDescription.BlobOnAfterGetRec(ItemDescription.FieldNo("Legal Disclaimer"), txtLegalDisclaimer);
@@ -712,7 +712,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
 
     local procedure ItemDescriptionModify()
     begin
-        if not ItemDescriptionExist then ItemDescription.InitItemDescription("No.");
+        if not ItemDescriptionExist then ItemDescription.InitItemDescription(Rec."No.");
         ItemDescription.Modify();
     end;
 

@@ -13,17 +13,17 @@ page 50005 "Item Filter Group List"
             repeater(RepeaterName)
             {
                 Editable = IsEditable;
-                field(ItemNo; "Item No.")
+                field(ItemNo; Rec."Item No.")
                 {
                     ApplicationArea = All;
                     Visible = visibleItemNo;
                 }
-                field(FilterGroup; "Filter Group")
+                field(FilterGroup; Rec."Filter Group")
                 {
                     ApplicationArea = All;
                     Visible = visibleGroup;
                 }
-                field(FilterValue; "Filter Value")
+                field(FilterValue; Rec."Filter Value")
                 {
                     ApplicationArea = All;
                     Visible = visibleValue;
@@ -34,7 +34,7 @@ page 50005 "Item Filter Group List"
 
     trigger OnOpenPage()
     begin
-        if (GetFilters() = '') or IsEditable then begin
+        if (Rec.GetFilters() = '') or IsEditable then begin
             visibleItemNo := true;
             visibleGroup := true;
             visibleValue := true;
@@ -43,12 +43,12 @@ page 50005 "Item Filter Group List"
         end;
 
         // visibleItemNo := (GetFilter("Item No.") <> '') or (GetFilter("Filter Group") <> '') or (GetFilter("Filter Value") <> '');
-        visibleGroup := (GetFilter("Filter Group") <> '') or (GetFilter("Filter Value") <> '');
-        visibleValue := (GetFilter("Filter Value") <> '');
+        visibleGroup := (Rec.GetFilter("Filter Group") <> '') or (Rec.GetFilter("Filter Value") <> '');
+        visibleValue := (Rec.GetFilter("Filter Value") <> '');
         IsEditable := false;
 
-        Reset();
-        FindFirst();
+        Rec.Reset();
+        Rec.FindFirst();
     end;
 
     procedure SetInit(_isEditable: Boolean)

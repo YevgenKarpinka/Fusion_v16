@@ -66,15 +66,15 @@ page 50012 "Item Filter By Group"
             repeater(RepeaterName)
             {
                 Editable = false;
-                field("Item No."; "Item No.")
+                field("Item No."; Rec."Item No.")
                 {
                     ApplicationArea = All;
                 }
-                field("Filter Group"; "Filter Group")
+                field("Filter Group"; Rec."Filter Group")
                 {
                     ApplicationArea = All;
                 }
-                field("Filter Value"; "Filter Value")
+                field("Filter Value"; Rec."Filter Value")
                 {
                     ApplicationArea = All;
                 }
@@ -87,13 +87,13 @@ page 50012 "Item Filter By Group"
         item: Record Item;
         tempItem: Record Item temporary;
     begin
-        FindSet();
+        Rec.FindSet();
         repeat
-            if item.Get("Item No.") then begin
+            if item.Get(Rec."Item No.") then begin
                 tempItem.TransferFields(item);
                 if tempItem.Insert() then;
             end;
-        until Next() = 0;
+        until Rec.Next() = 0;
 
         glParameterCount := tempItem.Count;
         tempItem.FindSet(false, false);
@@ -111,17 +111,17 @@ page 50012 "Item Filter By Group"
 
     local procedure setFilters()
     begin
-        ClearMarks();
-        Reset();
-        FilterGroup(0);
+        Rec.ClearMarks();
+        Rec.Reset();
+        Rec.FilterGroup(0);
         if filterByItemNo <> '' then
-            SetFilter("Item No.", filterByItemNo);
+            Rec.SetFilter("Item No.", filterByItemNo);
 
         if filterByGroup <> '' then
-            SetFilter("Filter Group", filterByGroup);
+            Rec.SetFilter("Filter Group", filterByGroup);
 
         if filterByValue <> '' then
-            SetFilter("Filter Value", filterByValue);
+            Rec.SetFilter("Filter Value", filterByValue);
 
         CurrPage.Update(false);
     end;

@@ -5,7 +5,7 @@ pageextension 50004 "Warehouse Shipment Ext." extends "Warehouse Shipment"
         // Add changes to page layout here
         addbefore("No.")
         {
-            field(CustomerName; ShipStationMgt.GetCustomerNameFromWhseShipment("No."))
+            field(CustomerName; ShipStationMgt.GetCustomerNameFromWhseShipment(Rec."No."))
             {
                 ApplicationArea = All;
                 CaptionML = ENU = 'Customer Name',

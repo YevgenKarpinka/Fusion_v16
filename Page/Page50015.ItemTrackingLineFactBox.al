@@ -18,7 +18,7 @@ page 50015 "Item Tracking Line FactBox"
                 {
                     ApplicationArea = All;
                 }
-                field("Expiration Date"; itemTrackingMgt.GetItemTrackingExpirationDateByLotNo(ReservEntryLotNo."Lot No.", "Item No."))
+                field("Expiration Date"; itemTrackingMgt.GetItemTrackingExpirationDateByLotNo(ReservEntryLotNo."Lot No.", Rec."Item No."))
                 {
                     ApplicationArea = All;
                 }
@@ -36,6 +36,6 @@ page 50015 "Item Tracking Line FactBox"
 
     trigger OnAfterGetRecord()
     begin
-        if ReservEntryLotNo.Get("Entry No.", true) then;
+        if ReservEntryLotNo.Get(Rec."Entry No.", true) then;
     end;
 }

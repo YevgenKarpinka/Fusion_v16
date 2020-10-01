@@ -14,11 +14,11 @@ page 50001 "Shipping Rates"
         {
             repeater(RepeaterName)
             {
-                field("SS Code"; "SS Code")
+                field("SS Code"; Rec."SS Code")
                 {
                     ApplicationArea = All;
                 }
-                field(Name; Name)
+                field(Name; Rec.Name)
                 {
                     ApplicationArea = All;
                 }
@@ -27,7 +27,7 @@ page 50001 "Shipping Rates"
             {
                 ApplicationArea = All;
                 Editable = false;
-                Enabled = "SS Code" <> '';
+                Enabled = Rec."SS Code" <> '';
                 SubPageLink = "Shipping Agent Code" = FIELD(Code);
                 UpdatePropagation = Both;
             }

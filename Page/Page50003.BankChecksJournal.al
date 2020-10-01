@@ -13,47 +13,47 @@ page 50003 "Bank Checks Journal"
         {
             repeater(RepeaterName)
             {
-                field(Status; Status)
+                field(Status; Rec.Status)
                 {
                     ApplicationArea = All;
                 }
-                field(ID; ID)
+                field(ID; Rec.ID)
                 {
                     ApplicationArea = All;
                 }
-                field("Bank Check Date"; "Bank Check Date")
+                field("Bank Check Date"; Rec."Bank Check Date")
                 {
                     ApplicationArea = All;
                 }
-                field("Bank Check No."; "Bank Check No.")
+                field("Bank Check No."; Rec."Bank Check No.")
                 {
                     ApplicationArea = All;
                 }
-                field("Customer No."; "Customer No.")
+                field("Customer No."; Rec."Customer No.")
                 {
                     ApplicationArea = All;
                 }
-                field(Description; Description)
+                field(Description; Rec.Description)
                 {
                     ApplicationArea = All;
                 }
-                field(Amount; Amount)
+                field(Amount; Rec.Amount)
                 {
                     ApplicationArea = All;
                 }
-                field("Source Type"; "Source Type")
+                field("Source Type"; Rec."Source Type")
                 {
                     ApplicationArea = All;
                 }
-                field("Source No."; "Source No.")
+                field("Source No."; Rec."Source No.")
                 {
                     ApplicationArea = All;
                 }
-                field("Last Modified DateTime"; "Last Modified DateTime")
+                field("Last Modified DateTime"; Rec."Last Modified DateTime")
                 {
                     ApplicationArea = All;
                 }
-                field("User ID"; "User ID")
+                field("User ID"; Rec."User ID")
                 {
                     ApplicationArea = All;
                 }

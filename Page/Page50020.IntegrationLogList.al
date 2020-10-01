@@ -20,22 +20,22 @@ page 50020 "Integration Log List"
             repeater(RepeaterName)
             {
                 Editable = false;
-                field("Entry No."; "Entry No.")
+                field("Entry No."; Rec."Entry No.")
                 {
                     ApplicationArea = All;
 
                 }
-                field("Operation Date"; "Operation Date")
+                field("Operation Date"; Rec."Operation Date")
                 {
                     ApplicationArea = All;
 
                 }
-                field("Source Operation"; "Source Operation")
+                field("Source Operation"; Rec."Source Operation")
                 {
                     ApplicationArea = All;
 
                 }
-                field("Operation Status"; Success)
+                field("Operation Status"; Rec.Success)
                 {
                     ApplicationArea = All;
 

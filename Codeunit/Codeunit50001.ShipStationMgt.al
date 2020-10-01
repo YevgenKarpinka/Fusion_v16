@@ -22,15 +22,13 @@ codeunit 50001 "ShipStation Mgt."
         SalesLine: Record "Sales Line";
         positionGrossWeight: Decimal;
     begin
-        with SalesLine do begin
-            SetRange("Document Type", "Document Type"::Order);
-            SetRange("Document No.", OrderNo);
-            if FindSet() then
-                repeat
-                    positionGrossWeight += Quantity * "Gross Weight";
-                until Next() = 0;
-            exit(positionGrossWeight);
-        end;
+        SalesLine.SetRange("Document Type", SalesLine."Document Type"::Order);
+        SalesLine.SetRange("Document No.", OrderNo);
+        if SalesLine.FindSet() then
+            repeat
+                positionGrossWeight += SalesLine.Quantity * SalesLine."Gross Weight";
+            until SalesLine.Next() = 0;
+        exit(positionGrossWeight);
     end;
 
     procedure SentOrderShipmentStatusForWooComerse(_salesOrderNo: Code[20]; locShippedStatus: Integer)
@@ -236,19 +234,17 @@ codeunit 50001 "ShipStation Mgt."
     var
         IntegrationLog: Record "Integration Log";
     begin
-        with IntegrationLog do begin
-            Init();
-            "Operation Date" := CurrentDateTime;
-            "Source Operation" := Source;
-            Autorization := CopyStr(_Autorization, 1, MaxStrLen(Autorization));
-            "Rest Method" := RestMethod;
-            URL := _URL;
-            Success := isSuccess;
-            Insert(true);
-            SetRequest(_Request);
-            SetResponse(_Response);
-            Commit();
-        end;
+        IntegrationLog.Init();
+        IntegrationLog."Operation Date" := CurrentDateTime;
+        IntegrationLog."Source Operation" := Source;
+        IntegrationLog.Autorization := CopyStr(_Autorization, 1, MaxStrLen(IntegrationLog.Autorization));
+        IntegrationLog."Rest Method" := RestMethod;
+        IntegrationLog.URL := _URL;
+        IntegrationLog.Success := isSuccess;
+        IntegrationLog.Insert(true);
+        IntegrationLog.SetRequest(_Request);
+        IntegrationLog.SetResponse(_Response);
+        Commit();
     end;
 
     procedure GetOrdersFromShipStation(): Text
@@ -537,27 +533,25 @@ codeunit 50001 "ShipStation Mgt."
         _jsonItemFilterGroup: JsonObject;
         _jsonItemFilters: JsonArray;
     begin
-        with _ItemFilterGroup do begin
-            SetRange("Item No.", _ItemNo);
-            if FindSet(false, false) then
-                repeat
-                    if _oldItemFilterGroup <> "Filter Group" then begin
-                        _jsonItemFilterGroup.Add('name', "Filter Group");
-                        _jsonItemFilterGroup.Add('filters', AddItemFilterGroupArray("Item No.", "Filter Group"));
-                        _jsonItemFilterGroupArray.Add(_jsonItemFilterGroup);
-                        _jsonItemFilters.Add(_jsonItemFilterGroup);
-                        Clear(_jsonItemFilterGroup);
-                        // added 11/09/2020 >>
-                        _jsonItemFilterGroup.Add('name_ru', "Filter Group RUS");
-                        _jsonItemFilterGroup.Add('filters_ru', AddItemFilterGroupArray("Item No.", "Filter Group"));
-                        _jsonItemFilterGroupArray.Add(_jsonItemFilterGroup);
-                        _jsonItemFilters.Add(_jsonItemFilterGroup);
-                        Clear(_jsonItemFilterGroup);
-                        // added 11/09/2020 <<
-                        _oldItemFilterGroup := "Filter Group";
-                    end;
-                until Next() = 0;
-        end;
+        _ItemFilterGroup.SetRange("Item No.", _ItemNo);
+        if _ItemFilterGroup.FindSet(false, false) then
+            repeat
+                if _oldItemFilterGroup <> _ItemFilterGroup."Filter Group" then begin
+                    _jsonItemFilterGroup.Add('name', _ItemFilterGroup."Filter Group");
+                    _jsonItemFilterGroup.Add('filters', AddItemFilterGroupArray(_ItemFilterGroup."Item No.", _ItemFilterGroup."Filter Group"));
+                    _jsonItemFilterGroupArray.Add(_jsonItemFilterGroup);
+                    _jsonItemFilters.Add(_jsonItemFilterGroup);
+                    Clear(_jsonItemFilterGroup);
+                    // added 11/09/2020 >>
+                    _jsonItemFilterGroup.Add('name_ru', _ItemFilterGroup."Filter Group RUS");
+                    _jsonItemFilterGroup.Add('filters_ru', AddItemFilterGroupArray(_ItemFilterGroup."Item No.", _ItemFilterGroup."Filter Group"));
+                    _jsonItemFilterGroupArray.Add(_jsonItemFilterGroup);
+                    _jsonItemFilters.Add(_jsonItemFilterGroup);
+                    Clear(_jsonItemFilterGroup);
+                    // added 11/09/2020 <<
+                    _oldItemFilterGroup := _ItemFilterGroup."Filter Group";
+                end;
+            until _ItemFilterGroup.Next() = 0;
         exit(_jsonItemFilters);
     end;
 
@@ -566,14 +560,12 @@ codeunit 50001 "ShipStation Mgt."
         _ItemFilterGroup: Record "Item Filter Group";
         _jsonItemFilterGroupArray: JsonArray;
     begin
-        with _ItemFilterGroup do begin
-            SetRange("Item No.", _ItemNo);
-            SetRange("Filter Group", _FilterGroup);
-            if FindSet(false, false) then
-                repeat
-                    _jsonItemFilterGroupArray.Add("Filter Value");
-                until Next() = 0;
-        end;
+        _ItemFilterGroup.SetRange("Item No.", _ItemNo);
+        _ItemFilterGroup.SetRange("Filter Group", _FilterGroup);
+        if _ItemFilterGroup.FindSet(false, false) then
+            repeat
+                _jsonItemFilterGroupArray.Add(_ItemFilterGroup."Filter Value");
+            until _ItemFilterGroup.Next() = 0;
         exit(_jsonItemFilterGroupArray);
     end;
 
@@ -582,14 +574,12 @@ codeunit 50001 "ShipStation Mgt."
         _ItemFilterGroup: Record "Item Filter Group";
         _jsonItemFilterGroupArray: JsonArray;
     begin
-        with _ItemFilterGroup do begin
-            SetRange("Item No.", _ItemNo);
-            SetRange("Filter Group", _FilterGroup);
-            if FindSet(false, false) then
-                repeat
-                    _jsonItemFilterGroupArray.Add("Filter Value RUS");
-                until Next() = 0;
-        end;
+        _ItemFilterGroup.SetRange("Item No.", _ItemNo);
+        _ItemFilterGroup.SetRange("Filter Group", _FilterGroup);
+        if _ItemFilterGroup.FindSet(false, false) then
+            repeat
+                _jsonItemFilterGroupArray.Add(_ItemFilterGroup."Filter Value RUS");
+            until _ItemFilterGroup.Next() = 0;
         exit(_jsonItemFilterGroupArray);
     end;
 
@@ -601,15 +591,13 @@ codeunit 50001 "ShipStation Mgt."
     begin
         if not _ItemCategory.Get(_ItemCategoryCode) or (_ItemCategoryCode = '') then exit(_jsonObject);
 
-        with _ItemCategory do begin
-            if Indentation = _Level then begin
-                _jsonObject.Add('id', Description);
-                _jsonObject.Add('eng', Description);
-                exit(_jsonObject);
-            end;
-            if "Parent Category" <> '' then
-                exit(jsonGetCategory("Parent Category", _Level));
+        if _ItemCategory.Indentation = _Level then begin
+            _jsonObject.Add('id', _ItemCategory.Description);
+            _jsonObject.Add('eng', _ItemCategory.Description);
+            exit(_jsonObject);
         end;
+        if _ItemCategory."Parent Category" <> '' then
+            exit(jsonGetCategory(_ItemCategory."Parent Category", _Level));
         exit(_jsonObject);
     end;
 
@@ -763,22 +751,18 @@ codeunit 50001 "ShipStation Mgt."
     var
         salesHeader: Record "Sales Header";
     begin
-        with salesHeader do begin
-            Get("Document Type"::Order, salesOrderNo);
-            "ShipStation Status" := lblShipped;
-            Modify();
-        end;
+        salesHeader.Get(salesHeader."Document Type"::Order, salesOrderNo);
+        salesHeader."ShipStation Status" := lblShipped;
+        salesHeader.Modify();
     end;
 
     local procedure GetLocationCode(DocNo: Code[20]): Code[10]
     var
         _SalesLine: Record "Sales Line";
     begin
-        with _SalesLine do begin
-            SetRange("Document No.", DocNo);
-            SetRange("Document Type", "Document Type"::Order);
-            if FindFirst() then exit("Location Code");
-        end;
+        _SalesLine.SetRange("Document No.", DocNo);
+        _SalesLine.SetRange("Document Type", _SalesLine."Document Type"::Order);
+        if _SalesLine.FindFirst() then exit(_SalesLine."Location Code");
         exit('');
     end;
 
@@ -816,13 +800,11 @@ codeunit 50001 "ShipStation Mgt."
     var
         salesHeader: Record "Sales Header";
     begin
-        with salesHeader do begin
-            Get("Document Type"::Order, salesOrderNo);
-            "Package Tracking No." := '';
-            "ShipStation Shipment ID" := '';
-            "ShipStation Status" := lblAwaitingShipment;
-            Modify();
-        end;
+        salesHeader.Get(salesHeader."Document Type"::Order, salesOrderNo);
+        salesHeader."Package Tracking No." := '';
+        salesHeader."ShipStation Shipment ID" := '';
+        salesHeader."ShipStation Status" := lblAwaitingShipment;
+        salesHeader.Modify();
     end;
 
     local procedure UpdateOrderFromLabel(DocNo: Code[20]; jsonText: Text);

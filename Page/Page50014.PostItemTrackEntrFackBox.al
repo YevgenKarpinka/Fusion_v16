@@ -15,38 +15,38 @@ page 50014 "Post.Item Track.Entr.FackBox"
         {
             repeater("Posted Item Tracking List")
             {
-                field("Item Ledger Entry No."; "Item Ledger Entry No.")
+                field("Item Ledger Entry No."; Rec."Item Ledger Entry No.")
                 {
                     ApplicationArea = All;
                     Visible = false;
                 }
-                field("Lot No."; itemTrackingMgt.GetItemTrackingLotNo("Item Ledger Entry No."))
+                field("Lot No."; itemTrackingMgt.GetItemTrackingLotNo(Rec."Item Ledger Entry No."))
                 {
                     ApplicationArea = All;
                     CaptionML = ENU = 'Lot No.', RUS = 'Номер партии';
                 }
-                field(ILE_Quantity; "Item Ledger Entry Quantity")
+                field(ILE_Quantity; Rec."Item Ledger Entry Quantity")
                 {
                     ApplicationArea = All;
                     Visible = false;
                 }
-                field(Quantity; itemTrackingMgt.GetItemTrackingQty("Item Ledger Entry No."))
+                field(Quantity; itemTrackingMgt.GetItemTrackingQty(Rec."Item Ledger Entry No."))
                 {
                     ApplicationArea = All;
                     DecimalPlaces = 0 : 5;
                     CaptionML = ENU = 'Quantity', RUS = 'Количество';
                 }
-                field("Expiration Date"; itemTrackingMgt.GetItemTrackingExpirationDate("Item Ledger Entry No."))
+                field("Expiration Date"; itemTrackingMgt.GetItemTrackingExpirationDate(Rec."Item Ledger Entry No."))
                 {
                     ApplicationArea = All;
                     CaptionML = ENU = 'Expiration Date', RUS = 'Срок годности';
                 }
-                field("Warranty Date"; itemTrackingMgt.GetItemTrackingWarrantyDate("Item Ledger Entry No."))
+                field("Warranty Date"; itemTrackingMgt.GetItemTrackingWarrantyDate(Rec."Item Ledger Entry No."))
                 {
                     ApplicationArea = All;
                     CaptionML = ENU = 'Warranty Date', RUS = 'Гарантийный срок';
                 }
-                field("Serial No."; itemTrackingMgt.GetItemTrackingSerialNo("Item Ledger Entry No."))
+                field("Serial No."; itemTrackingMgt.GetItemTrackingSerialNo(Rec."Item Ledger Entry No."))
                 {
                     ApplicationArea = All;
                     CaptionML = ENU = 'Serial No.', RUS = 'Серийный номер';

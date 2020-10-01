@@ -14,50 +14,50 @@ page 50004 "Bank Checks Archive"
         {
             repeater(RepeaterName)
             {
-                field(Status; Status)
+                field(Status; Rec.Status)
                 {
                     ApplicationArea = All;
                 }
-                field(ID; ID)
+                field(ID; Rec.ID)
                 {
                     ApplicationArea = All;
                 }
-                field("Bank Check Date"; "Bank Check Date")
+                field("Bank Check Date"; Rec."Bank Check Date")
                 {
                     ApplicationArea = All;
                 }
-                field("Bank Check No."; "Bank Check No.")
+                field("Bank Check No."; Rec."Bank Check No.")
                 {
                     ApplicationArea = All;
                 }
-                field("Customer No."; "Customer No.")
+                field("Customer No."; Rec."Customer No.")
                 {
                     ApplicationArea = All;
                 }
-                field(Description; Description)
+                field(Description; Rec.Description)
                 {
                     ApplicationArea = All;
                 }
-                field(Amount; Amount)
+                field(Amount; Rec.Amount)
                 {
                     ApplicationArea = All;
                 }
-                field("Source No."; "Source No.")
-                {
-                    ApplicationArea = All;
-                    Visible = false;
-                }
-                field("Source Type"; "Source Type")
+                field("Source No."; Rec."Source No.")
                 {
                     ApplicationArea = All;
                     Visible = false;
                 }
-                field("Last Modified DateTime"; "Last Modified DateTime")
+                field("Source Type"; Rec."Source Type")
+                {
+                    ApplicationArea = All;
+                    Visible = false;
+                }
+                field("Last Modified DateTime"; Rec."Last Modified DateTime")
                 {
                     ApplicationArea = All;
                     // Visible = false;
                 }
-                field("User ID"; "User ID")
+                field("User ID"; Rec."User ID")
                 {
                     ApplicationArea = All;
                     Visible = false;
