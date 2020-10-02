@@ -15,23 +15,21 @@ codeunit 50006 "IC Extended"
         _PurchaseOrderNo: Code[20];
         _PostedPurchaseInvoceNo: code[20];
     begin
-        with SalesLine do begin
-            if Type <> Type::Item then exit;
+        if SalesLine.Type <> SalesLine.Type::Item then exit;
 
-            FoundPurchaseOrder("Document No.", _PurchaseOrderNo, _PostedPurchaseInvoceNo);
-            if (_PurchaseOrderNo = '') and (_PostedPurchaseInvoceNo = '') then exit;
+        FoundPurchaseOrder(SalesLine."Document No.", _PurchaseOrderNo, _PostedPurchaseInvoceNo);
+        if (_PurchaseOrderNo = '') and (_PostedPurchaseInvoceNo = '') then exit;
 
-            case CurrentFieldNo of
-                FieldNo("No."):
-                    if ("No." <> xSalesLine."No.") then
-                        FieldError("No.");
-                FieldNo(Quantity):
-                    if (Quantity <> xSalesLine.Quantity) then
-                        FieldError(Quantity);
-                FieldNo(Amount):
-                    if (Amount <> xSalesLine.Amount) then
-                        FieldError(Amount);
-            end;
+        case CurrentFieldNo of
+            SalesLine.FieldNo("No."):
+                if (SalesLine."No." <> xSalesLine."No.") then
+                    SalesLine.FieldError("No.");
+            SalesLine.FieldNo(Quantity):
+                if (SalesLine.Quantity <> xSalesLine.Quantity) then
+                    SalesLine.FieldError(Quantity);
+            SalesLine.FieldNo(Amount):
+                if (SalesLine.Amount <> xSalesLine.Amount) then
+                    SalesLine.FieldError(Amount);
         end;
     end;
 
@@ -136,33 +134,29 @@ codeunit 50006 "IC Extended"
         if (_PurchaseOrderNo <> '')
             and _PurchHeader.Get(_PurchHeader."Document Type"::Order, _PurchaseOrderNo)
                 and _ICPartner.Get(_PurchHeader."Buy-from IC Partner Code") then begin
-            with _ICSalesHeader do begin
-                ChangeCompany(_ICPartner."Inbox Details");
-                SetCurrentKey("External Document No.");
-                SetRange("External Document No.", _PurchaseOrderNo);
-                if FindSet(false, false) then
-                    repeat
-                        _ICSalesHeaderForDelete.ChangeCompany(_ICPartner."Inbox Details");
-                        _ICSalesHeaderForDelete.Get("Document Type"::Order, "No.");
-                        _ICSalesHeaderForDelete."External Document No." := '';
-                        _ICSalesHeaderForDelete.Modify();
-                        _ICSalesHeaderForDelete.Delete(true);
-                    until Next() = 0;
-            end;
+            _ICSalesHeader.ChangeCompany(_ICPartner."Inbox Details");
+            _ICSalesHeader.SetCurrentKey("External Document No.");
+            _ICSalesHeader.SetRange("External Document No.", _PurchaseOrderNo);
+            if _ICSalesHeader.FindSet(false, false) then
+                repeat
+                    _ICSalesHeaderForDelete.ChangeCompany(_ICPartner."Inbox Details");
+                    _ICSalesHeaderForDelete.Get(_ICSalesHeader."Document Type"::Order, _ICSalesHeader."No.");
+                    _ICSalesHeaderForDelete."External Document No." := '';
+                    _ICSalesHeaderForDelete.Modify();
+                    _ICSalesHeaderForDelete.Delete(true);
+                until _ICSalesHeader.Next() = 0;
         end;
 
-        with _PurchHeader do begin
-            SetCurrentKey("IC Document No.");
-            SetRange("IC Document No.", _SalesHeaderNo);
-            SetRange("Document Type", "Document Type"::Order);
-            if FindSet(false, false) then
-                repeat
-                    _PurchHeaderForDelete.Get("Document Type"::Order, "No.");
-                    _PurchHeaderForDelete."IC Document No." := '';
-                    _PurchHeaderForDelete.Modify();
-                    _PurchHeaderForDelete.Delete(true);
-                until Next() = 0;
-        end;
+        _PurchHeader.SetCurrentKey("IC Document No.");
+        _PurchHeader.SetRange("IC Document No.", _SalesHeaderNo);
+        _PurchHeader.SetRange("Document Type", _PurchHeader."Document Type"::Order);
+        if _PurchHeader.FindSet(false, false) then
+            repeat
+                _PurchHeaderForDelete.Get(_PurchHeader."Document Type"::Order, _PurchHeader."No.");
+                _PurchHeaderForDelete."IC Document No." := '';
+                _PurchHeaderForDelete.Modify();
+                _PurchHeaderForDelete.Delete(true);
+            until _PurchHeader.Next() = 0;
     end;
 
     procedure FoundICSalesOrder(purchaseOrderNo: Code[20]; var _ICSalesOrderNo: Code[20]; var _PostedICSalesInvoiceNo: Code[20])
@@ -179,25 +173,21 @@ codeunit 50006 "IC Extended"
             and _PurchHeader.Get(_PurchHeader."Document Type"::Order, purchaseOrderNo)
             and _ICPartner.Get(_PurchHeader."Buy-from IC Partner Code") then begin
 
-            with _ICSalesHeader do begin
-                ChangeCompany(_ICPartner."Inbox Details");
-                SetCurrentKey("External Document No.");
-                SetRange("External Document No.", purchaseOrderNo);
-                if FindFirst() then begin
-                    _ICSalesOrderNo := "No.";
-                    exit;
-                end;
+            _ICSalesHeader.ChangeCompany(_ICPartner."Inbox Details");
+            _ICSalesHeader.SetCurrentKey("External Document No.");
+            _ICSalesHeader.SetRange("External Document No.", purchaseOrderNo);
+            if _ICSalesHeader.FindFirst() then begin
+                _ICSalesOrderNo := _ICSalesHeader."No.";
+                exit;
             end;
         end;
 
-        with _ICSalesInvHeader do begin
-            ChangeCompany(_ICPartner."Inbox Details");
-            SetCurrentKey("External Document No.");
-            SetRange("External Document No.", purchaseOrderNo);
-            if FindFirst() then
-                _PostedICSalesInvoiceNo := "No.";
+        _ICSalesInvHeader.ChangeCompany(_ICPartner."Inbox Details");
+        _ICSalesInvHeader.SetCurrentKey("External Document No.");
+        _ICSalesInvHeader.SetRange("External Document No.", purchaseOrderNo);
+        if _ICSalesInvHeader.FindFirst() then
+            _PostedICSalesInvoiceNo := _ICSalesInvHeader."No.";
 
-        end;
 
     end;
 
@@ -213,21 +203,17 @@ codeunit 50006 "IC Extended"
         if _salesHeader.Get(_salesHeader."Document Type"::Order, _salesOrderNo)
             and _ICPartner.Get(_salesHeader."Sell-to IC Partner Code") then begin
 
-            with _ICPurchaseHeader do begin
-                ChangeCompany(_ICPartner."Inbox Details");
-                if get("Document Type"::Order, _salesHeader."External Document No.") then
-                    _ICSalesOrderNo := "IC Document No.";
-                exit;
-            end;
+            _ICPurchaseHeader.ChangeCompany(_ICPartner."Inbox Details");
+            if _ICPurchaseHeader.Get(_ICPurchaseHeader."Document Type"::Order, _salesHeader."External Document No.") then
+                _ICSalesOrderNo := _ICPurchaseHeader."IC Document No.";
+            exit;
         end;
 
-        with _ICPurchaseInvHeader do begin
-            ChangeCompany(_ICPartner."Inbox Details");
-            SetCurrentKey("Order No.");
-            SetRange("Order No.", _salesOrderNo);
-            if FindFirst() then
-                _ICSalesOrderNo := "IC Document No.";
-        end;
+        _ICPurchaseInvHeader.ChangeCompany(_ICPartner."Inbox Details");
+        _ICPurchaseInvHeader.SetCurrentKey("Order No.");
+        _ICPurchaseInvHeader.SetRange("Order No.", _salesOrderNo);
+        if _ICPurchaseInvHeader.FindFirst() then
+            _ICSalesOrderNo := _ICPurchaseInvHeader."IC Document No.";
     end;
 
     procedure FoundPurchaseOrder(salesOrderNo: Code[20]; var _PurchaseOrderNo: Code[20]; var _PostedPurchaseInvoiceNo: Code[20])
@@ -238,21 +224,18 @@ codeunit 50006 "IC Extended"
         _PurchaseOrderNo := '';
         _PostedPurchaseInvoiceNo := '';
 
-        with _PurchHeader do begin
-            SetCurrentKey("IC Document No.");
-            SetRange("IC Document No.", salesOrderNo);
-            SetRange("Document Type", "Document Type"::Order);
-            if FindFirst() then begin
-                _PurchaseOrderNo := "No.";
-                exit;
-            end;
+        _PurchHeader.SetCurrentKey("IC Document No.");
+        _PurchHeader.SetRange("IC Document No.", salesOrderNo);
+        _PurchHeader.SetRange("Document Type", _PurchHeader."Document Type"::Order);
+        if _PurchHeader.FindFirst() then begin
+            _PurchaseOrderNo := _PurchHeader."No.";
+            exit;
         end;
-        with _PurchInvHeader do begin
-            SetCurrentKey("IC Document No.");
-            SetRange("IC Document No.", salesOrderNo);
-            if FindFirst() then
-                _PostedPurchaseInvoiceNo := "No.";
-        end;
+
+        _PurchInvHeader.SetCurrentKey("IC Document No.");
+        _PurchInvHeader.SetRange("IC Document No.", salesOrderNo);
+        if _PurchInvHeader.FindFirst() then
+            _PostedPurchaseInvoiceNo := _PurchInvHeader."No.";
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Release Sales Document", 'OnAfterReleaseSalesDoc', '', false, false)]
@@ -286,48 +269,46 @@ codeunit 50006 "IC Extended"
             or (_customer."Posting Type Shipment Cost" <> _customer."Posting Type Shipment Cost"::"Charge (Item)") then
             exit;
 
-        with _salesLine do begin
-            SetCurrentKey(Type);
-            SetRange("Document Type", _salesHeader."Document Type");
-            SetRange("Document No.", _salesHeader."No.");
-            SetRange(Type, Type::"Charge (Item)");
-            SetRange("No.", _customer."Sales No. Shipment Cost");
-            if not FindFirst() then exit;
+        _salesLine.SetCurrentKey(Type);
+        _salesLine.SetRange("Document Type", _salesHeader."Document Type");
+        _salesLine.SetRange("Document No.", _salesHeader."No.");
+        _salesLine.SetRange(Type, _salesLine.Type::"Charge (Item)");
+        _salesLine.SetRange("No.", _customer."Sales No. Shipment Cost");
+        if not _salesLine.FindFirst() then exit;
 
-            TestField("No.");
-            TestField(Quantity);
+        _salesLine.TestField("No.");
+        _salesLine.TestField(Quantity);
 
-            _currency.Initialize(_salesHeader."Currency Code");
-            if ("Inv. Discount Amount" = 0) AND ("Line Discount Amount" = 0) AND
-               (NOT _salesHeader."Prices Including VAT")
-            then
-                _itemChargeAssgntLineAmt := "Line Amount"
+        _currency.Initialize(_salesHeader."Currency Code");
+        if (_salesLine."Inv. Discount Amount" = 0) AND (_salesLine."Line Discount Amount" = 0) AND
+           (NOT _salesHeader."Prices Including VAT")
+        then
+            _itemChargeAssgntLineAmt := _salesLine."Line Amount"
+        else
+            IF _salesHeader."Prices Including VAT" then
+                _itemChargeAssgntLineAmt :=
+                  ROUND(_salesLine.CalcLineAmount / (1 + _salesLine."VAT %" / 100), _currency."Amount Rounding Precision")
             else
-                IF _salesHeader."Prices Including VAT" then
-                    _itemChargeAssgntLineAmt :=
-                      ROUND(CalcLineAmount / (1 + "VAT %" / 100), _currency."Amount Rounding Precision")
-                else
-                    _itemChargeAssgntLineAmt := CalcLineAmount;
+                _itemChargeAssgntLineAmt := _salesLine.CalcLineAmount;
 
-            _itemChargeAssgntSales.RESET;
-            _itemChargeAssgntSales.SETRANGE("Document Type", "Document Type");
-            _itemChargeAssgntSales.SETRANGE("Document No.", "Document No.");
-            _itemChargeAssgntSales.SETRANGE("Document Line No.", "Line No.");
-            _itemChargeAssgntSales.SETRANGE("Item Charge No.", "No.");
-            if not _itemChargeAssgntSales.FindLast() then begin
-                _itemChargeAssgntSales."Document Type" := "Document Type";
-                _itemChargeAssgntSales."Document No." := "Document No.";
-                _itemChargeAssgntSales."Document Line No." := "Line No.";
-                _itemChargeAssgntSales."Item Charge No." := "No.";
-                _itemChargeAssgntSales."Unit Cost" :=
-                  ROUND(_itemChargeAssgntLineAmt / Quantity, _currency."Unit-Amount Rounding Precision");
-            end;
-
-            _itemChargeAssgntLineAmt :=
-                  ROUND(_itemChargeAssgntLineAmt * ("Qty. to Invoice" / Quantity), _currency."Amount Rounding Precision");
-
-            _assignItemChargeSales.CreateDocChargeAssgn(_itemChargeAssgntSales, "Shipment No.");
+        _itemChargeAssgntSales.RESET;
+        _itemChargeAssgntSales.SETRANGE("Document Type", _salesLine."Document Type");
+        _itemChargeAssgntSales.SETRANGE("Document No.", _salesLine."Document No.");
+        _itemChargeAssgntSales.SETRANGE("Document Line No.", _salesLine."Line No.");
+        _itemChargeAssgntSales.SETRANGE("Item Charge No.", _salesLine."No.");
+        if not _itemChargeAssgntSales.FindLast() then begin
+            _itemChargeAssgntSales."Document Type" := _salesLine."Document Type";
+            _itemChargeAssgntSales."Document No." := _salesLine."Document No.";
+            _itemChargeAssgntSales."Document Line No." := _salesLine."Line No.";
+            _itemChargeAssgntSales."Item Charge No." := _salesLine."No.";
+            _itemChargeAssgntSales."Unit Cost" :=
+              ROUND(_itemChargeAssgntLineAmt / _salesLine.Quantity, _currency."Unit-Amount Rounding Precision");
         end;
+
+        _itemChargeAssgntLineAmt :=
+              ROUND(_itemChargeAssgntLineAmt * (_salesLine."Qty. to Invoice" / _salesLine.Quantity), _currency."Amount Rounding Precision");
+
+        _assignItemChargeSales.CreateDocChargeAssgn(_itemChargeAssgntSales, _salesLine."Shipment No.");
         SuggestAssignment(_salesLine, _salesLine.Quantity, _itemChargeAssgntLineAmt);
     end;
 
@@ -395,48 +376,41 @@ codeunit 50006 "IC Extended"
             or (_salesHeader."ShipStation Shipment Amount" = 0) then
             exit;
 
-        with _salesLineLast do begin
-            SetRange("Document Type", "Document Type"::Order);
-            SetRange("Document No.", _salesHeaderNo);
-            if FindLast() then
-                LineNo := "Line No." + 10000
-            else
-                LineNo := 10000;
+        _salesLineLast.SetRange("Document Type", _salesLineLast."Document Type"::Order);
+        _salesLineLast.SetRange("Document No.", _salesHeaderNo);
+        if _salesLineLast.FindLast() then
+            LineNo := _salesLineLast."Line No." + 10000
+        else
+            LineNo := 10000;
+
+        if _salesHeader.Status = _salesHeader.Status::Released then begin
+            _salesHeader.Status := _salesHeader.Status::Open;
+            _salesHeader.Modify();
+            UpdatedStatus := true;
         end;
 
-        with _salesHeader do
-            if Status = Status::Released then begin
-                Status := Status::Open;
-                Modify();
-                UpdatedStatus := true;
-            end;
+        _salesLine.Init;
+        _salesLine."Document Type" := _salesLine."Document Type"::Order;
+        _salesLine."Document No." := _salesHeaderNo;
+        _salesLine."Line No." := LineNo;
+        _salesLine.Insert(true);
+        _salesLine.Validate(Type, _customer."Posting Type Shipment Cost");
+        _salesLine.Validate("No.", _customer."Sales No. Shipment Cost");
+        _salesLine.Validate(Quantity, 1);
+        _salesLine.Validate("Unit Price", _salesHeader."ShipStation Shipment Amount");
+        _salesLine.Modify(true);
 
-        with _salesLine do begin
-            Init;
-            "Document Type" := "Document Type"::Order;
-            "Document No." := _salesHeaderNo;
-            "Line No." := LineNo;
-            Insert(true);
-            Validate(Type, _customer."Posting Type Shipment Cost");
-            Validate("No.", _customer."Sales No. Shipment Cost");
-            Validate(Quantity, 1);
-            Validate("Unit Price", _salesHeader."ShipStation Shipment Amount");
-            Modify(true)
+        if UpdatedStatus then begin
+            _salesHeader.Status := _salesHeader.Status::Released;
+            _salesHeader.Modify();
         end;
-
-        if UpdatedStatus then
-            with _salesHeader do begin
-                Status := Status::Released;
-                Modify();
-            end;
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Copy Document Mgt.", 'OnAfterTransfldsFromSalesToPurchLine', '', false, false)]
     local procedure Update(var FromSalesLine: Record "Sales Line"; var ToPurchaseLine: Record "Purchase Line")
     begin
         if FromSalesLine."Document Type" <> FromSalesLine."Document Type"::Order then exit;
-        with ToPurchaseLine do
-            Validate("Direct Unit Cost", FromSalesLine."Unit Price");
+        ToPurchaseLine.Validate("Direct Unit Cost", FromSalesLine."Unit Price");
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales-Post", 'OnAfterPostSalesDoc', '', false, false)]
@@ -506,13 +480,11 @@ codeunit 50006 "IC Extended"
         ICVendorNo := GetICVendor(CompanyName);
         if (ICVendorNo = '') then exit;
 
-        with fromSalesLine do begin
-            SetRange("Document Type", fromSalesHeader."Document Type");
-            SetRange("Document No.", fromSalesHeader."No.");
-            SetRange(Type, Type::Item);
-            SetFilter(Quantity, '<>%1', 0);
-            if fromSalesLine.IsEmpty then exit;
-        end;
+        fromSalesLine.SetRange("Document Type", fromSalesHeader."Document Type");
+        fromSalesLine.SetRange("Document No.", fromSalesHeader."No.");
+        fromSalesLine.SetRange(Type, fromSalesLine.Type::Item);
+        fromSalesLine.SetFilter(Quantity, '<>%1', 0);
+        if fromSalesLine.IsEmpty then exit;
 
         // Copy Sales Order to Purchase Order
         CopySalesOrder2PurchaseOrder(ICVendorNo, fromSalesHeader, toPurchHeader);
@@ -542,17 +514,14 @@ codeunit 50006 "IC Extended"
     var
         _Vendor: Record Vendor;
     begin
-        with _Vendor do begin
-            if ICPartner <> CompanyName then
-                ChangeCompany(ICPartner);
-            SetCurrentKey("IC Partner Code");
-            SetFilter("IC Partner Code", '<>%1', '');
-            SetRange(Blocked, Blocked::" ");
-            if FindFirst() then
-                exit("No.")
-            else
-                exit('');
-        end;
+        if ICPartner <> CompanyName then
+            _Vendor.ChangeCompany(ICPartner);
+        _Vendor.SetCurrentKey("IC Partner Code");
+        _Vendor.SetFilter("IC Partner Code", '<>%1', '');
+        _Vendor.SetRange(Blocked, _Vendor.Blocked::" ");
+        if _Vendor.FindFirst() then
+            exit(_Vendor."No.");
+        exit('');
     end;
 
     local procedure GetShipStationSetup()

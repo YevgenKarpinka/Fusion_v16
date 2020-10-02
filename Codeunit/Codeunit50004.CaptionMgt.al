@@ -54,15 +54,12 @@ codeunit 50004 "Caption Mgt."
     var
         locItemLedgerEntry: Record "Item Ledger Entry";
     begin
-        with locItemLedgerEntry do begin
-            SetCurrentKey("Item No.", Positive, "Remaining Quantity");
-            SetRange("Item No.", ItemNo);
-            SetRange(Positive, true);
-            SetFilter("Remaining Quantity", '>%1', 0);
-            if IsEmpty then
-                exit(false)
-            else
-                exit(true);
-        end;
+        locItemLedgerEntry.SetCurrentKey("Item No.", Positive, "Remaining Quantity");
+        locItemLedgerEntry.SetRange("Item No.", ItemNo);
+        locItemLedgerEntry.SetRange(Positive, true);
+        locItemLedgerEntry.SetFilter("Remaining Quantity", '>%1', 0);
+        if locItemLedgerEntry.IsEmpty then
+            exit(false);
+        exit(true);
     end;
 }

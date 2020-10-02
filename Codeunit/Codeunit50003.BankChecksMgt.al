@@ -11,19 +11,17 @@ codeunit 50003 "Bank Checks Mgt."
 
     procedure SetBankCheckStatus(_BankCheck: Record "Bank Check Journal Line"; _newStatus: Integer)
     begin
-        with _BankCheck do begin
-            if _newStatus = 0 then begin
-                if Status = Status::Rejected then begin
-                    Status := _newStatus;
-                end;
-            end else begin
-                Status := _newStatus;
+        if _newStatus = 0 then begin
+            if _BankCheck.Status = _BankCheck.Status::Rejected then begin
+                _BankCheck.Status := _newStatus;
             end;
-            Modify(true);
-            if Status = Status::Confirmed then begin
-                // Create Payment Journal Line
-                CreatePaymentFromBankCheck(_BankCheck);
-            end;
+        end else begin
+            _BankCheck.Status := _newStatus;
+        end;
+        _BankCheck.Modify(true);
+        if _BankCheck.Status = _BankCheck.Status::Confirmed then begin
+            // Create Payment Journal Line
+            CreatePaymentFromBankCheck(_BankCheck);
         end;
     end;
 
@@ -49,60 +47,56 @@ codeunit 50003 "Bank Checks Mgt."
         GenJnlTemplate.TestField("Source Code");
         // GenJnlBatch.TestField("Reason Code");
 
-        with procesGenJnlLine do begin
-            SetRange("Journal Template Name", GLSetup."Journal Template Name");
-            SetRange("Journal Batch Name", GLSetup."Journal Batch Name");
-            SetRange("External Document No.", _BankCheck."Bank Check No.");
-            SetRange("Document Date", _BankCheck."Bank Check Date");
-            if not IsEmpty then
-                exit; // instead; go to the document
+        procesGenJnlLine.SetRange("Journal Template Name", GLSetup."Journal Template Name");
+        procesGenJnlLine.SetRange("Journal Batch Name", GLSetup."Journal Batch Name");
+        procesGenJnlLine.SetRange("External Document No.", _BankCheck."Bank Check No.");
+        procesGenJnlLine.SetRange("Document Date", _BankCheck."Bank Check Date");
+        if not procesGenJnlLine.IsEmpty then
+            exit; // instead; go to the document
 
-            if PostedBankCheckExist(_BankCheck."Bank Check No.") then begin
-                Message(msgBankCheckNoExist, _BankCheck."Bank Check No.");
-                exit;
-            end;
-
-            SetRange("External Document No.");
-            SetRange("Document Date");
-            if FindLast() then
-                LineNo := "Line No." + 10000
-            else
-                LineNo := 10000;
+        if PostedBankCheckExist(_BankCheck."Bank Check No.") then begin
+            Message(msgBankCheckNoExist, _BankCheck."Bank Check No.");
+            exit;
         end;
 
-        with GenJnlLine do begin
-            Init();
-            "Journal Template Name" := GLSetup."Journal Template Name";
-            "Journal Batch Name" := GLSetup."Journal Batch Name";
-            "Line No." := LineNo;
+        procesGenJnlLine.SetRange("External Document No.");
+        procesGenJnlLine.SetRange("Document Date");
+        if procesGenJnlLine.FindLast() then
+            LineNo := procesGenJnlLine."Line No." + 10000
+        else
+            LineNo := 10000;
 
-            "Posting Date" := _BankCheck."Bank Check Date";
-            "Document Date" := _BankCheck."Bank Check Date";
+        GenJnlLine.Init();
+        GenJnlLine."Journal Template Name" := GLSetup."Journal Template Name";
+        GenJnlLine."Journal Batch Name" := GLSetup."Journal Batch Name";
+        GenJnlLine."Line No." := LineNo;
 
-            CLEAR(NoSeriesMgt);
-            "Document No." := NoSeriesMgt.GetNextNo(GenJnlBatch."No. Series", "Posting Date", true);
+        GenJnlLine."Posting Date" := _BankCheck."Bank Check Date";
+        GenJnlLine."Document Date" := _BankCheck."Bank Check Date";
 
-            "Account Type" := "Account Type"::Customer;
-            "Document Type" := "Document Type"::Payment;
+        CLEAR(NoSeriesMgt);
+        GenJnlLine."Document No." := NoSeriesMgt.GetNextNo(GenJnlBatch."No. Series", GenJnlLine."Posting Date", true);
 
-            Validate("Account No.", _BankCheck."Customer No.");
+        GenJnlLine."Account Type" := GenJnlLine."Account Type"::Customer;
+        GenJnlLine."Document Type" := GenJnlLine."Document Type"::Payment;
 
-            "Bal. Account Type" := GenJnlBatch."Bal. Account Type";
-            VALIDATE("Bal. Account No.", GenJnlBatch."Bal. Account No.");
+        GenJnlLine.Validate("Account No.", _BankCheck."Customer No.");
 
-            Validate(Amount, -_BankCheck.Amount);
-            Description := COPYSTR(_BankCheck.Description, 1, MAXSTRLEN(Description));
-            "External Document No." := _BankCheck."Bank Check No.";
+        GenJnlLine."Bal. Account Type" := GenJnlBatch."Bal. Account Type";
+        GenJnlLine.VALIDATE("Bal. Account No.", GenJnlBatch."Bal. Account No.");
 
-            "Source Code" := GenJnlTemplate."Source Code";
-            // "Reason Code" := GenJnlBatch."Reason Code";
-            "Posting No. Series" := GenJnlBatch."Posting No. Series";
-            "System-Created Entry" := true;
+        GenJnlLine.Validate(Amount, -_BankCheck.Amount);
+        GenJnlLine.Description := COPYSTR(_BankCheck.Description, 1, MAXSTRLEN(GenJnlLine.Description));
+        GenJnlLine."External Document No." := _BankCheck."Bank Check No.";
+
+        GenJnlLine."Source Code" := GenJnlTemplate."Source Code";
+        // "Reason Code" := GenJnlBatch."Reason Code";
+        GenJnlLine."Posting No. Series" := GenJnlBatch."Posting No. Series";
+        GenJnlLine."System-Created Entry" := true;
 
 
-            UpdateJournalBatchID();
-            Insert(true);
-        end;
+        GenJnlLine.UpdateJournalBatchID();
+        GenJnlLine.Insert(true);
     end;
 
 
@@ -110,11 +104,9 @@ codeunit 50003 "Bank Checks Mgt."
     var
         GLEntry: Record "G/L Entry";
     begin
-        with GLEntry do begin
-            SetCurrentKey("External Document No.");
-            SetRange("External Document No.", BankCheckNo);
-            exit(not IsEmpty);
-        end;
+        GLEntry.SetCurrentKey("External Document No.");
+        GLEntry.SetRange("External Document No.", BankCheckNo);
+        exit(not GLEntry.IsEmpty);
     end;
 
     var

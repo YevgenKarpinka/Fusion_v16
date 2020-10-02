@@ -26,7 +26,7 @@ pageextension 50018 "Sales Order Subform Ext." extends "Sales Order Subform"
 
                 trigger OnAction()
                 begin
-                    OpenItemTrackingLines;
+                    Rec.OpenItemTrackingLines;
                 end;
             }
         }

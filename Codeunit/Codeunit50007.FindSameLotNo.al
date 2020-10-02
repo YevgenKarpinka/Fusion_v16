@@ -6,10 +6,8 @@ codeunit 50007 "Find Same Lot No"
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Create Put-away", 'OnFindBinContent', '', true, true)]
     local procedure FindSameLotNo(PostedWhseReceiptLine: Record "Posted Whse. Receipt Line"; PutAwayTemplateLine: Record "Put-away Template Line"; var BinContent: Record "Bin Content")
     begin
-        with BinContent do begin
-            if PutAwayTemplateLine."Find Same Lot No." then
-                SetRange("Lot No.", PostedWhseReceiptLine."Lot No.")
-        end;
+        if PutAwayTemplateLine."Find Same Lot No." then
+            BinContent.SetRange("Lot No.", PostedWhseReceiptLine."Lot No.")
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Create Put-away", 'OnBeforeCreateNewWhseActivity', '', true, true)]
@@ -17,11 +15,11 @@ codeunit 50007 "Find Same Lot No"
     var
         BinContent: Record "Bin Content";
     begin
-        with PostedWhseRcptLine do
-            if BinContent.Get("Location Code", "Bin Code", "Item No.", "Variant Code", "Unit of Measure Code") then begin
-                BinContent."Lot No." := PostedWhseRcptLine."Lot No.";
-                BinContent.Modify();
-            end;
+        if BinContent.Get(PostedWhseRcptLine."Location Code", PostedWhseRcptLine."Bin Code", PostedWhseRcptLine."Item No.",
+                PostedWhseRcptLine."Variant Code", PostedWhseRcptLine."Unit of Measure Code") then begin
+            BinContent."Lot No." := PostedWhseRcptLine."Lot No.";
+            BinContent.Modify();
+        end;
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Create Put-away", 'OnAfterWhseActivLineInsert', '', true, true)]
