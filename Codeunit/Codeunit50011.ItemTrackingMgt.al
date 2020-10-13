@@ -62,28 +62,22 @@ codeunit 50011 "Item Tracking Mgt."
 
     procedure GetItemTrackingExpirationDateByLotNo(LotNo: Code[50]; ItemNo: Code[20]): Date
     begin
-        with glItemLedgerEntry do begin
-            SetCurrentKey("Item No.", "Lot No.");
-            SetRange("Item No.", ItemNo);
-            SetRange("Lot No.", LotNo);
-            if FindFirst() then
-                exit("Expiration Date")
-            else
-                exit(0D);
-        end;
+        glItemLedgerEntry.SetCurrentKey("Item No.", "Lot No.");
+        glItemLedgerEntry.SetRange("Item No.", ItemNo);
+        glItemLedgerEntry.SetRange("Lot No.", LotNo);
+        if glItemLedgerEntry.FindFirst() then
+            exit(glItemLedgerEntry."Expiration Date");
+        exit(0D);
     end;
 
     procedure GetItemTrackingWarrantyDateByLotNo(LotNo: Code[50]; ItemNo: Code[20]): Date
     begin
-        with glItemLedgerEntry do begin
-            SetCurrentKey("Item No.", "Lot No.");
-            SetRange("Item No.", ItemNo);
-            SetRange("Lot No.", LotNo);
-            if FindFirst() then
-                exit("Warranty Date")
-            else
-                exit(0D);
-        end;
+        glItemLedgerEntry.SetCurrentKey("Item No.", "Lot No.");
+        glItemLedgerEntry.SetRange("Item No.", ItemNo);
+        glItemLedgerEntry.SetRange("Lot No.", LotNo);
+        if glItemLedgerEntry.FindFirst() then
+            exit(glItemLedgerEntry."Warranty Date");
+        exit(0D);
     end;
 
     local procedure GetILE(ILE_EntryNo: Integer): Boolean
@@ -125,24 +119,20 @@ codeunit 50011 "Item Tracking Mgt."
         LineNo: Integer;
         LineNumber: Integer;
     begin
-        with WhseMoveLineToUpdate do begin
-            SetCurrentKey("Source Line No.", "Item No.", "Expiration Date");
-            SetRange("Activity Type", "Activity Type"::Movement);
-            SetRange("No.", WhseMoveNo);
-            if FindLast() then begin
-                LineNo := 10000 * Count;
-                repeat
-                    WhseMoveLine := WhseMoveLineToUpdate;
-                    DELETE;
-                    WhseMoveLineToUpdate := WhseMoveLine;
-                    "Line No." := LineNo;
-                    INSERT;
-                    LineNo -= 10000;
-                until Next(-1) = 0;
-            end;
+        WhseMoveLineToUpdate.SetCurrentKey("Source Line No.", "Item No.", "Expiration Date");
+        WhseMoveLineToUpdate.SetRange("Activity Type", WhseMoveLineToUpdate."Activity Type"::Movement);
+        WhseMoveLineToUpdate.SetRange("No.", WhseMoveNo);
+        if WhseMoveLineToUpdate.FindLast() then begin
+            LineNo := 10000 * WhseMoveLineToUpdate.Count;
+            repeat
+                WhseMoveLine := WhseMoveLineToUpdate;
+                WhseMoveLineToUpdate.DELETE;
+                WhseMoveLineToUpdate := WhseMoveLine;
+                WhseMoveLineToUpdate."Line No." := LineNo;
+                WhseMoveLineToUpdate.INSERT;
+                LineNo -= 10000;
+            until WhseMoveLineToUpdate.Next(-1) = 0;
         end;
-
-
     end;
 
     local procedure UpdateMoveLines(WhseMoveNo: Code[20])
@@ -180,127 +170,121 @@ codeunit 50011 "Item Tracking Mgt."
                 // get PutAway filter
                 PutAwayFilter := CreatePick.GetBinTypeFilter(4);
 
-                with WhseMoveLine do begin
-                    SetCurrentKey("Action Type", "Bin Code", "Item No.");
-                    SetRange("Activity Type", "Activity Type"::Movement);
-                    SetRange("No.", WhseMoveNo);
-                    SetRange("Action Type", "Action Type"::Take);
-                    SetFilter("Bin Code", '<>%1', '');
-                    SetRange("Item No.", tempItem."No.");
-                    if FindSet(false, false) then begin
-                        ToBinCode := "Bin Code";
-                        ToZoneCode := "Zone Code";
-                        repeat
-                            // delete record completted for pick
-                            DeleteWhseMoveLine("No.", "Line No.");
-                        until Next() = 0;
-                    end else begin
-                        Reset();
-                        SetRange("Activity Type", "Activity Type"::Movement);
-                        SetRange("No.", WhseMoveNo);
-                        FindFirst();
+                WhseMoveLine.SetCurrentKey("Action Type", "Bin Code", "Item No.");
+                WhseMoveLine.SetRange("Activity Type", WhseMoveLine."Activity Type"::Movement);
+                WhseMoveLine.SetRange("No.", WhseMoveNo);
+                WhseMoveLine.SetRange("Action Type", WhseMoveLine."Action Type"::Take);
+                WhseMoveLine.SetFilter("Bin Code", '<>%1', '');
+                WhseMoveLine.SetRange("Item No.", tempItem."No.");
+                if WhseMoveLine.FindSet(false, false) then begin
+                    ToBinCode := WhseMoveLine."Bin Code";
+                    ToZoneCode := WhseMoveLine."Zone Code";
+                    repeat
+                        // delete record completted for pick
+                        DeleteWhseMoveLine(WhseMoveLine."No.", WhseMoveLine."Line No.");
+                    until WhseMoveLine.Next() = 0;
+                end else begin
+                    WhseMoveLine.Reset();
+                    WhseMoveLine.SetRange("Activity Type", WhseMoveLine."Activity Type"::Movement);
+                    WhseMoveLine.SetRange("No.", WhseMoveNo);
+                    WhseMoveLine.FindFirst();
 
-                        // find empty toBin
-                        Bin.SetCurrentKey("Bin Type Code");
-                        Bin.SetRange("Location Code", "Location Code");
-                        Bin.SetRange("Bin Type Code", PickFilter);
-                        if BinCodeFilter <> '' then
-                            Bin.SetFilter(Code, '<>%1', BinCodeFilter);
-                        Bin.SetRange(Empty, true);
-                        if not Bin.FindFirst() then
-                            Error(errNoEmptyBinForPick, "Location Code", PickFilter);
-                        ToBinCode := Bin.Code;
-                        ToZoneCode := Bin."Zone Code";
-                        // create Bin Code filter
-                        CreateBinCodeFilter(BinCodeFilter, ToBinCode);
-                    end;
+                    // find empty toBin
+                    Bin.SetCurrentKey("Bin Type Code");
+                    Bin.SetRange("Location Code", WhseMoveLine."Location Code");
+                    Bin.SetRange("Bin Type Code", PickFilter);
+                    if BinCodeFilter <> '' then
+                        Bin.SetFilter(Code, '<>%1', BinCodeFilter);
+                    Bin.SetRange(Empty, true);
+                    if not Bin.FindFirst() then
+                        Error(errNoEmptyBinForPick, WhseMoveLine."Location Code", PickFilter);
+                    ToBinCode := Bin.Code;
+                    ToZoneCode := Bin."Zone Code";
+                    // create Bin Code filter
+                    CreateBinCodeFilter(BinCodeFilter, ToBinCode);
                 end;
 
                 // modify Place record
-                with WhseMoveLine do begin
-                    SetRange("Action Type", "Action Type"::Place);
-                    SetFilter("Bin Code", '<>%1', '');
-                    SetRange("Item No.", tempItem."No.");
-                    if FindSet(false, true) then
-                        repeat
-                            Validate("Zone Code", ToZoneCode);
-                            Validate("Bin Code", ToBinCode);
-                            Modify();
-                        until Next() = 0;
-                end;
-
-                with WhseMoveLine do begin
-                    Reset();
-                    SetRange("Activity Type", "Activity Type"::Movement);
-                    SetRange("No.", WhseMoveNo);
-                    SetRange("Action Type", "Action Type"::Take);
-                    SetRange("Item No.", tempItem."No.");
-                    FindSet(false, true);
-                    GetLocation("Location Code");
-                    ReservationEntry.SetCurrentKey("Source ID", "Source Ref. No.");
-                    BinContent.SetCurrentKey("Location Code", "Item No.", "Variant Code", "Unit of Measure Code");
-                    remQtytoMove := tempItem."Budget Quantity";
+                WhseMoveLine.SetRange("Action Type", WhseMoveLine."Action Type"::Place);
+                WhseMoveLine.SetFilter("Bin Code", '<>%1', '');
+                WhseMoveLine.SetRange("Item No.", tempItem."No.");
+                if WhseMoveLine.FindSet(false, true) then
                     repeat
-                        PlaceLineNo := "Line No." + 10000;
-                        remWhseMoveQty := Quantity;
-                        ReservationEntry.SetRange("Source ID", "Source No.");
-                        ReservationEntry.SetRange("Source Ref. No.", "Source Line No.");
-                        if ReservationEntry.FindSet(false, false) then
-                            repeat
-                                ReservationEntryLotNo.Get(ReservationEntry."Entry No.", true);
-                                if ReservationEntryLotNo."Item Tracking" = ReservationEntryLotNo."Item Tracking"::"Lot No." then begin
-                                    remReservQauntity := ReservationEntryLotNo.Quantity;
-                                    // find FromBin
-                                    BinContent.SetRange("Location Code", "Location Code");
-                                    BinContent.SetRange("Item No.", "Item No.");
-                                    BinContent.SetRange("Variant Code", "Variant Code");
-                                    BinContent.SetRange("Unit of Measure Code", "Unit of Measure Code");
-                                    BinContent.SetFilter("Lot No. Filter", ReservationEntryLotNo."Lot No.");
-                                    if BinContent.FindSet(false, false) then begin
-                                        repeat
-                                            QtyAvailableToTake := BinContent.CalcQtyAvailToTakeUOM();
-                                            if (BinContent."Zone Code" = PutAwayFilter) and (QtyAvailableToTake > 0) then begin
-                                                "Lot No." := ReservationEntryLotNo."Lot No.";
-                                                "Expiration Date" := ItemTrackingMgt.ExistingExpirationDate("Item No.", "Variant Code",
-                                                    ReservationEntryLotNo."Lot No.", '', false, EntriesExist);
-                                                "Zone Code" := BinContent."Zone Code";
-                                                "Bin Code" := BinContent."Bin Code";
-                                                Modify();
-                                                UpdatePlaceLine(WhseMoveLine, ToZoneCode, ToBinCode);
-                                                if QtyAvailableToTake > remReservQauntity then
-                                                    QtyAvailableToTake := remReservQauntity;
+                        WhseMoveLine.Validate("Zone Code", ToZoneCode);
+                        WhseMoveLine.Validate("Bin Code", ToBinCode);
+                        WhseMoveLine.Modify();
+                    until WhseMoveLine.Next() = 0;
 
-                                                if QtyAvailableToTake < remQtytoMove then begin
-                                                    if "Qty. to Handle" <> QtyAvailableToTake then begin
-                                                        if "Qty. to Handle" > QtyAvailableToTake then begin
-                                                            Validate("Qty. to Handle", QtyAvailableToTake);
-                                                            Modify(true);
-                                                        end;
-                                                        if "Qty. to Handle" <> Quantity then begin
-                                                            // split Place line for remaining quantity
-                                                            SplitPlaceLineForRemQty(WhseMoveLine);
-                                                            // split Take line for remaining quantity
-                                                            WhseMoveLineForSplit.Copy(WhseMoveLine);
-                                                            SplitLine(WhseMoveLineForSplit);
-                                                            WhseMoveLine.Copy(WhseMoveLineForSplit);
-                                                            Next();
-                                                            "Lot No." := '';
-                                                            "Expiration Date" := 0D;
-                                                            Modify();
-                                                        end;
+                WhseMoveLine.Reset();
+                WhseMoveLine.SetRange("Activity Type", WhseMoveLine."Activity Type"::Movement);
+                WhseMoveLine.SetRange("No.", WhseMoveNo);
+                WhseMoveLine.SetRange("Action Type", WhseMoveLine."Action Type"::Take);
+                WhseMoveLine.SetRange("Item No.", tempItem."No.");
+                WhseMoveLine.FindSet(false, true);
+                GetLocation(WhseMoveLine."Location Code");
+                ReservationEntry.SetCurrentKey("Source ID", "Source Ref. No.");
+                BinContent.SetCurrentKey("Location Code", "Item No.", "Variant Code", "Unit of Measure Code");
+                remQtytoMove := tempItem."Budget Quantity";
+                repeat
+                    PlaceLineNo := WhseMoveLine."Line No." + 10000;
+                    remWhseMoveQty := WhseMoveLine.Quantity;
+                    ReservationEntry.SetRange("Source ID", WhseMoveLine."Source No.");
+                    ReservationEntry.SetRange("Source Ref. No.", WhseMoveLine."Source Line No.");
+                    if ReservationEntry.FindSet(false, false) then
+                        repeat
+                            ReservationEntryLotNo.Get(ReservationEntry."Entry No.", true);
+                            if ReservationEntryLotNo."Item Tracking" = ReservationEntryLotNo."Item Tracking"::"Lot No." then begin
+                                remReservQauntity := ReservationEntryLotNo.Quantity;
+                                // find FromBin
+                                BinContent.SetRange("Location Code", WhseMoveLine."Location Code");
+                                BinContent.SetRange("Item No.", WhseMoveLine."Item No.");
+                                BinContent.SetRange("Variant Code", WhseMoveLine."Variant Code");
+                                BinContent.SetRange("Unit of Measure Code", WhseMoveLine."Unit of Measure Code");
+                                BinContent.SetFilter("Lot No. Filter", ReservationEntryLotNo."Lot No.");
+                                if BinContent.FindSet(false, false) then begin
+                                    repeat
+                                        QtyAvailableToTake := BinContent.CalcQtyAvailToTakeUOM();
+                                        if (BinContent."Zone Code" = PutAwayFilter) and (QtyAvailableToTake > 0) then begin
+                                            WhseMoveLine."Lot No." := ReservationEntryLotNo."Lot No.";
+                                            WhseMoveLine."Expiration Date" := ItemTrackingMgt.ExistingExpirationDate(WhseMoveLine."Item No.", WhseMoveLine."Variant Code",
+                                                ReservationEntryLotNo."Lot No.", '', false, EntriesExist);
+                                            WhseMoveLine."Zone Code" := BinContent."Zone Code";
+                                            WhseMoveLine."Bin Code" := BinContent."Bin Code";
+                                            WhseMoveLine.Modify();
+                                            UpdatePlaceLine(WhseMoveLine, ToZoneCode, ToBinCode);
+                                            if QtyAvailableToTake > remReservQauntity then
+                                                QtyAvailableToTake := remReservQauntity;
+
+                                            if QtyAvailableToTake < remQtytoMove then begin
+                                                if WhseMoveLine."Qty. to Handle" <> QtyAvailableToTake then begin
+                                                    if WhseMoveLine."Qty. to Handle" > QtyAvailableToTake then begin
+                                                        WhseMoveLine.Validate("Qty. to Handle", QtyAvailableToTake);
+                                                        WhseMoveLine.Modify(true);
+                                                    end;
+                                                    if WhseMoveLine."Qty. to Handle" <> WhseMoveLine.Quantity then begin
+                                                        // split Place line for remaining quantity
+                                                        SplitPlaceLineForRemQty(WhseMoveLine);
+                                                        // split Take line for remaining quantity
+                                                        WhseMoveLineForSplit.Copy(WhseMoveLine);
+                                                        WhseMoveLine.SplitLine(WhseMoveLineForSplit);
+                                                        WhseMoveLine.Copy(WhseMoveLineForSplit);
+                                                        WhseMoveLine.Next();
+                                                        WhseMoveLine."Lot No." := '';
+                                                        WhseMoveLine."Expiration Date" := 0D;
+                                                        WhseMoveLine.Modify();
                                                     end;
                                                 end;
-                                                // calculate remaining qty
-                                                remQtytoMove -= QtyAvailableToTake;
-                                                remReservQauntity -= QtyAvailableToTake;
-                                                remWhseMoveQty -= QtyAvailableToTake;
                                             end;
-                                        until (BinContent.Next() = 0) or (remReservQauntity <= 0);
-                                    end;
+                                            // calculate remaining qty
+                                            remQtytoMove -= QtyAvailableToTake;
+                                            remReservQauntity -= QtyAvailableToTake;
+                                            remWhseMoveQty -= QtyAvailableToTake;
+                                        end;
+                                    until (BinContent.Next() = 0) or (remReservQauntity <= 0);
                                 end;
-                            until (ReservationEntry.Next() = 0) or (remWhseMoveQty <= 0);
-                    until Next() = 0;
-                end;
+                            end;
+                        until (ReservationEntry.Next() = 0) or (remWhseMoveQty <= 0);
+                until WhseMoveLine.Next() = 0;
             until tempItem.Next() = 0;
         end;
     end;
@@ -397,77 +381,67 @@ ToBinCode: Code[20])
     var
         WhseMoveLineForSplit: Record "Warehouse Activity Line";
     begin
-        with WhseMoveLine do begin
-            WhseMoveLineForSplit.Get("Activity Type", "No.", PlaceLineNo);
-            WhseMoveLineForSplit."Lot No." := "Lot No.";
-            WhseMoveLineForSplit."Expiration Date" := "Expiration Date";
-            WhseMoveLineForSplit."Zone Code" := ToZoneCode;
-            WhseMoveLineForSplit."Bin Code" := ToBinCode;
-            WhseMoveLineForSplit.Modify();
-        end;
+        WhseMoveLineForSplit.Get(WhseMoveLine."Activity Type", WhseMoveLine."No.", PlaceLineNo);
+        WhseMoveLineForSplit."Lot No." := WhseMoveLine."Lot No.";
+        WhseMoveLineForSplit."Expiration Date" := WhseMoveLine."Expiration Date";
+        WhseMoveLineForSplit."Zone Code" := ToZoneCode;
+        WhseMoveLineForSplit."Bin Code" := ToBinCode;
+        WhseMoveLineForSplit.Modify();
     end;
 
     local procedure SplitPlaceLineForRemQty(WhseMoveLine: Record "Warehouse Activity Line")
     var
         WhseMoveLineForSplit: Record "Warehouse Activity Line";
     begin
-        with WhseMoveLine do begin
-            WhseMoveLineForSplit.Get("Activity Type", "No.", PlaceLineNo);
-            WhseMoveLineForSplit.Validate("Qty. to Handle", "Qty. to Handle");
-            WhseMoveLineForSplit.Modify(true);
-            SplitPlaceLine(WhseMoveLineForSplit);
-        end;
+        WhseMoveLineForSplit.Get(WhseMoveLine."Activity Type", WhseMoveLine."No.", PlaceLineNo);
+        WhseMoveLineForSplit.Validate("Qty. to Handle", WhseMoveLine."Qty. to Handle");
+        WhseMoveLineForSplit.Modify(true);
+        SplitPlaceLine(WhseMoveLineForSplit);
     end;
 
     local procedure DeleteWhseMoveLine(WhseMoveNo: Code[20]; LineNo: Integer)
     var
         WhseMoveLine: Record "Warehouse Activity Line";
     begin
-        with WhseMoveLine do begin
-            SetRange("Activity Type", "Activity Type"::Movement);
-            SetRange("No.", WhseMoveNo);
-            SetRange("Line No.", LineNo, LineNo + 10000);
-            Ascending(false);
-            if FindSet(false, false) then
-                repeat
-                    Delete(); // to ensure correct item tracking update
-                    DeleteBinContent("Action Type"::Place);
-                    UpdateRelatedItemTrkg(WhseMoveLine);
-                until Next() = 0;
-        end;
+        WhseMoveLine.SetRange("Activity Type", WhseMoveLine."Activity Type"::Movement);
+        WhseMoveLine.SetRange("No.", WhseMoveNo);
+        WhseMoveLine.SetRange("Line No.", LineNo, LineNo + 10000);
+        WhseMoveLine.Ascending(false);
+        if WhseMoveLine.FindSet(false, false) then
+            repeat
+                WhseMoveLine.Delete(); // to ensure correct item tracking update
+                WhseMoveLine.DeleteBinContent(WhseMoveLine."Action Type"::Place);
+                WhseMoveLine.UpdateRelatedItemTrkg(WhseMoveLine);
+            until WhseMoveLine.Next() = 0;
     end;
 
     local procedure CreateTempItemList(WhseMoveNo: Code[20]; var tempItem: Record Item temporary)
     var
         WhseMoveLine: Record "Warehouse Activity Line";
     begin
-        with WhseMoveLine do begin
-            SetCurrentKey("Action Type", "Bin Code", "Item No.");
-            SetRange("Activity Type", "Activity Type"::Movement);
-            SetRange("No.", WhseMoveNo);
-            SetRange("Action Type", "Action Type"::Take);
-            SetRange("Bin Code", '');
-            if FindSet(false, false) then
-                repeat
-                    if not tempItem.Get("Item No.") then begin
-                        tempItem."No." := "Item No.";
-                        tempItem.Insert();
-                    end;
-                until Next() = 0;
-        end;
+        WhseMoveLine.SetCurrentKey("Action Type", "Bin Code", "Item No.");
+        WhseMoveLine.SetRange("Activity Type", WhseMoveLine."Activity Type"::Movement);
+        WhseMoveLine.SetRange("No.", WhseMoveNo);
+        WhseMoveLine.SetRange("Action Type", WhseMoveLine."Action Type"::Take);
+        WhseMoveLine.SetRange("Bin Code", '');
+        if WhseMoveLine.FindSet(false, false) then
+            repeat
+                if not tempItem.Get(WhseMoveLine."Item No.") then begin
+                    tempItem."No." := WhseMoveLine."Item No.";
+                    tempItem.Insert();
+                end;
+            until WhseMoveLine.Next() = 0;
 
-        with tempItem do begin
-            if FindSet(false, false) then
-                repeat
-                    WhseMoveLine.SetRange("Bin Code");
-                    WhseMoveLine.SetRange("Item No.", "No.");
-                    if WhseMoveLine.FindSet(false, false) then begin
-                        WhseMoveLine.CalcSums(Quantity);
-                        tempItem."Budget Quantity" := WhseMoveLine.Quantity;
-                        tempItem.Modify();
-                    end;
-                until Next() = 0;
-        end;
+        if tempItem.FindSet(false, false) then
+            repeat
+                WhseMoveLine.SetRange("Bin Code");
+                WhseMoveLine.SetRange("Item No.", tempItem."No.");
+                if WhseMoveLine.FindSet(false, false) then begin
+                    WhseMoveLine.CalcSums(Quantity);
+                    tempItem."Budget Quantity" := WhseMoveLine.Quantity;
+                    tempItem.Modify();
+                end;
+            until tempItem.Next() = 0;
     end;
 
     procedure GetLocation(LocationCode: Code[10])
@@ -491,14 +465,12 @@ ToBinCode: Code[20])
             exit(true);
 
         repeat
-            with WhsePickLine do begin
-                SetCurrentKey("Shipping Advice");
-                SetRange("Activity Type", WhsePickHeader.Type);
-                SetRange("No.", WhsePickHeader."No.");
-                SetRange("Action Type", "Action Type"::Take);
-                SetRange("Bin Code", '');
-                exit(IsEmpty);
-            end;
+            WhsePickLine.SetCurrentKey("Shipping Advice");
+            WhsePickLine.SetRange("Activity Type", WhsePickHeader.Type);
+            WhsePickLine.SetRange("No.", WhsePickHeader."No.");
+            WhsePickLine.SetRange("Action Type", WhsePickLine."Action Type"::Take);
+            WhsePickLine.SetRange("Bin Code", '');
+            exit(WhsePickLine.IsEmpty);
         until WhsePickHeader.Next() = 0;
         exit(true);
     end;
@@ -507,14 +479,12 @@ ToBinCode: Code[20])
     var
         WhseActivLine: Record "Warehouse Activity Line";
     begin
-        with WhseActivLine do begin
-            SetCurrentKey("Shipping Advice");
-            SetRange("Activity Type", "Activity Type"::Pick);
-            SetRange("No.", WhsePickNo);
-            SetRange("Action Type", "Action Type"::Take);
-            SetRange("Bin Code", '');
-            exit(IsEmpty);
-        end;
+        WhseActivLine.SetCurrentKey("Shipping Advice");
+        WhseActivLine.SetRange("Activity Type", WhseActivLine."Activity Type"::Pick);
+        WhseActivLine.SetRange("No.", WhsePickNo);
+        WhseActivLine.SetRange("Action Type", WhseActivLine."Action Type"::Take);
+        WhseActivLine.SetRange("Bin Code", '');
+        exit(WhseActivLine.IsEmpty);
     end;
 
     local procedure WhsePickToWhseMove(WhsePickNo: Code[20]; var WhseMoveNo: code[20])
@@ -524,27 +494,23 @@ ToBinCode: Code[20])
         WhseMoveHeader: Record "Warehouse Activity Header";
         WhseMoveLine: Record "Warehouse Activity Line";
     begin
-        with WhseMoveHeader do begin
-            WhsePickHeader.Get(WhseMoveHeader.Type::Pick, WhsePickNo);
-            Init();
-            TransferFields(WhsePickHeader);
-            Type := Type::Movement;
-            "No." := '';
-            Insert(true);
-        end;
+        WhsePickHeader.Get(WhseMoveHeader.Type::Pick, WhsePickNo);
+        WhseMoveHeader.Init();
+        WhseMoveHeader.TransferFields(WhsePickHeader);
+        WhseMoveHeader.Type := WhseMoveHeader.Type::Movement;
+        WhseMoveHeader."No." := '';
+        WhseMoveHeader.Insert(true);
 
-        with WhsePickLine do begin
-            SetRange("Activity Type", "Activity Type"::Pick);
-            SetRange("No.", WhsePickNo);
-            FindSet(false, false);
-            repeat
-                WhseMoveLine.Init();
-                WhseMoveLine.TransferFields(WhsePickLine);
-                WhseMoveLine."Activity Type" := "Activity Type"::Movement;
-                WhseMoveLine."No." := WhseMoveHeader."No.";
-                WhseMoveLine.Insert(true);
-            until Next() = 0;
-        end;
+        WhsePickLine.SetRange("Activity Type", WhsePickLine."Activity Type"::Pick);
+        WhsePickLine.SetRange("No.", WhsePickNo);
+        WhsePickLine.FindSet(false, false);
+        repeat
+            WhseMoveLine.Init();
+            WhseMoveLine.TransferFields(WhsePickLine);
+            WhseMoveLine."Activity Type" := WhsePickLine."Activity Type"::Movement;
+            WhseMoveLine."No." := WhseMoveHeader."No.";
+            WhseMoveLine.Insert(true);
+        until WhsePickLine.Next() = 0;
         WhseMoveNo := WhseMoveHeader."No.";
     end;
 

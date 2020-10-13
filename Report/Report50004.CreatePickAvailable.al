@@ -309,9 +309,8 @@ report 50004 "Create Pick Available"
 
             CreatePick.SetCalledFromWksh(true);
 
-            with PickWhseWkshLine do
-                CreatePick.CreateTempLine("Location Code", "Item No.", "Variant Code",
-                  "Unit of Measure Code", '', "To Bin Code", "Qty. per Unit of Measure", PickQty, PickQtyBase);
+            CreatePick.CreateTempLine(PickWhseWkshLine."Location Code", PickWhseWkshLine."Item No.", PickWhseWkshLine."Variant Code",
+                PickWhseWkshLine."Unit of Measure Code", '', PickWhseWkshLine."To Bin Code", PickWhseWkshLine."Qty. per Unit of Measure", PickQty, PickQtyBase);
 
             TotalQtyPickedBase := CreatePick.GetActualQtyPickedBase;
 

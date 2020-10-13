@@ -14,15 +14,15 @@ page 50024 "Item Bin Content FactBox"
         {
             repeater("Item Bin Content")
             {
-                field("Lot No."; "Lot No.")
+                field("Lot No."; Rec."Lot No.")
                 {
                     ApplicationArea = All;
                 }
-                field("Expiration Date"; "Expiration Date")
+                field("Expiration Date"; Rec."Expiration Date")
                 {
                     ApplicationArea = All;
                 }
-                field("Remaining Quantity"; "Remaining Quantity")
+                field("Remaining Quantity"; Rec."Remaining Quantity")
                 {
                     ApplicationArea = All;
                 }
@@ -38,7 +38,7 @@ page 50024 "Item Bin Content FactBox"
                 {
                     ApplicationArea = All;
                 }
-                field(Quantity; Quantity)
+                field(Quantity; Rec.Quantity)
                 {
                     ApplicationArea = All;
                 }
@@ -58,7 +58,7 @@ page 50024 "Item Bin Content FactBox"
                 {
                     ApplicationArea = All;
                 }
-                // field("Document Date"; "Document Date")
+                // field("Document Date"; Rec."Document Date")
                 // {
                 //     ApplicationArea = All;
                 // }
@@ -68,11 +68,11 @@ page 50024 "Item Bin Content FactBox"
 
     trigger OnAfterGetRecord()
     begin
-        BinContent.SetRange("Location Code", "Location Code");
-        BinContent.SetRange("Item No.", "Item No.");
-        BinContent.SetRange("Variant Code", "Variant Code");
-        BinContent.SetRange("Unit of Measure Code", "Unit of Measure Code");
-        BinContent.SetFilter("Lot No. Filter", "Lot No.");
+        BinContent.SetRange("Location Code", Rec."Location Code");
+        BinContent.SetRange("Item No.", Rec."Item No.");
+        BinContent.SetRange("Variant Code", Rec."Variant Code");
+        BinContent.SetRange("Unit of Measure Code", Rec."Unit of Measure Code");
+        BinContent.SetFilter("Lot No. Filter", Rec."Lot No.");
         if BinContent.FindSet(false, false) then
             repeat
                 if BinContent.CalcQtyAvailToTakeUOM() > 0 then exit;

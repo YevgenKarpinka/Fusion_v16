@@ -38,13 +38,11 @@ tableextension 50004 "Shipping Agent Ext." extends "Shipping Agent"
 
     procedure TempInsertCarrierFromShipStation(var _SA: Record "Shipping Agent" temporary; CarrierCode: Code[10]; ShippingAgentName: Text[50]; SSCarrierCode: Text[20]; SSProviderId: Integer)
     begin
-        with _SA do begin
-            Init();
-            Code := CarrierCode;
-            Name := ShippingAgentName;
-            "SS Code" := SSCarrierCode;
-            "SS Provider Id" := SSProviderId;
-            Insert();
-        end;
+        _SA.Init();
+        _SA.Code := CarrierCode;
+        _SA.Name := ShippingAgentName;
+        _SA."SS Code" := SSCarrierCode;
+        _SA."SS Provider Id" := SSProviderId;
+        _SA.Insert();
     end;
 }

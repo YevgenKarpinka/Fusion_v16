@@ -17,12 +17,17 @@ page 50009 "APIV2 - Item Charges"
         {
             group(GroupName)
             {
-                field(itemChargeNo; "No.")
+                field(systemId; Rec.SystemId)
+                {
+                    ApplicationArea = All;
+                    Caption = 'systemId', Locked = true;
+                }
+                field(itemChargeNo; Rec."No.")
                 {
                     ApplicationArea = All;
                     Caption = 'itemChargeNo', Locked = true;
                 }
-                field(description; Description)
+                field(description; Rec.Description)
                 {
                     ApplicationArea = All;
                     Caption = 'description', Locked = true;

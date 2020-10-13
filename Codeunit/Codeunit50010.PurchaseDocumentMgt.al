@@ -16,17 +16,16 @@ codeunit 50010 "Purchase Document Mgt."
 
         // copy line to next Line No
         locPurchaseLine.TransferFields(purchaseLine);
-        with lastPurchaseLine do begin
-            SetCurrentKey("Line No.");
-            SetRange("Document Type", purchaseLine."Document Type");
-            SetRange("Document No.", purchaseLine."Document No.");
-            FindFirst();
-            Get(purchaseLine."Document Type", purchaseLine."Document No.", purchaseLine."Line No.");
-            if Next() = 0 then
-                LineNo := locPurchaseLine."Line No." + 10000
-            else
-                LineNo := ("Line No." + locPurchaseLine."Line No.") div 2
-        end;
+        lastPurchaseLine.SetCurrentKey("Line No.");
+        lastPurchaseLine.SetRange("Document Type", purchaseLine."Document Type");
+        lastPurchaseLine.SetRange("Document No.", purchaseLine."Document No.");
+        lastPurchaseLine.FindFirst();
+        lastPurchaseLine.Get(purchaseLine."Document Type", purchaseLine."Document No.", purchaseLine."Line No.");
+        if lastPurchaseLine.Next() = 0 then
+            LineNo := locPurchaseLine."Line No." + 10000
+        else
+            LineNo := (lastPurchaseLine."Line No." + locPurchaseLine."Line No.") div 2;
+
         locPurchaseLine."Line No." := LineNo;
         locPurchaseLine.Insert();
 

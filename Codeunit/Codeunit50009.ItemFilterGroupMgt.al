@@ -13,16 +13,14 @@ codeunit 50009 "Item Filter Group Mgt."
         tempItemFilterGroup.Reset();
         tempItemFilterGroup.DeleteAll();
 
-        with locItemFilterGroup do begin
-            FindSet(false, false);
-            repeat
-                tempItemFilterGroup.SetRange("Item No.", "Item No.");
-                if not tempItemFilterGroup.FindFirst() then begin
-                    tempItemFilterGroup.TransferFields(locItemFilterGroup);
-                    tempItemFilterGroup.Insert();
-                end;
-            until Next() = 0;
-        end;
+        locItemFilterGroup.FindSet(false, false);
+        repeat
+            tempItemFilterGroup.SetRange("Item No.", locItemFilterGroup."Item No.");
+            if not tempItemFilterGroup.FindFirst() then begin
+                tempItemFilterGroup.TransferFields(locItemFilterGroup);
+                tempItemFilterGroup.Insert();
+            end;
+        until locItemFilterGroup.Next() = 0;
 
         if Page.RunModal(Page::"Item Filter Group List", tempItemFilterGroup) = Action::LookupOK then begin
             filterByItemNo += StrSubstNo('|%1', tempItemFilterGroup."Item No.");
@@ -39,16 +37,14 @@ codeunit 50009 "Item Filter Group Mgt."
         tempItemFilterGroup.Reset();
         tempItemFilterGroup.DeleteAll();
 
-        with locItemFilterGroup do begin
-            FindSet(false, false);
-            repeat
-                tempItemFilterGroup.SetRange("Filter Group", "Filter Group");
-                if not tempItemFilterGroup.FindFirst() then begin
-                    tempItemFilterGroup.TransferFields(locItemFilterGroup);
-                    tempItemFilterGroup.Insert();
-                end;
-            until Next() = 0;
-        end;
+        locItemFilterGroup.FindSet(false, false);
+        repeat
+            tempItemFilterGroup.SetRange("Filter Group", locItemFilterGroup."Filter Group");
+            if not tempItemFilterGroup.FindFirst() then begin
+                tempItemFilterGroup.TransferFields(locItemFilterGroup);
+                tempItemFilterGroup.Insert();
+            end;
+        until locItemFilterGroup.Next() = 0;
 
         if Page.RunModal(Page::"Item Filter Group List", tempItemFilterGroup) = Action::LookupOK then begin
             filterByGroup += StrSubstNo('|%1', tempItemFilterGroup."Filter Group");
@@ -66,17 +62,15 @@ codeunit 50009 "Item Filter Group Mgt."
         tempItemFilterGroup.Reset();
         tempItemFilterGroup.DeleteAll();
 
-        with locItemFilterGroup do begin
-            SetFilter("Filter Group", _ItemFilterGroup.GetFilter("Filter Group"));
-            FindSet(false, false);
-            repeat
-                tempItemFilterGroup.SetRange("Filter Value", "Filter Value");
-                if not tempItemFilterGroup.FindFirst() then begin
-                    tempItemFilterGroup.TransferFields(locItemFilterGroup);
-                    tempItemFilterGroup.Insert();
-                end;
-            until Next() = 0;
-        end;
+        locItemFilterGroup.SetFilter("Filter Group", _ItemFilterGroup.GetFilter("Filter Group"));
+        locItemFilterGroup.FindSet(false, false);
+        repeat
+            tempItemFilterGroup.SetRange("Filter Value", locItemFilterGroup."Filter Value");
+            if not tempItemFilterGroup.FindFirst() then begin
+                tempItemFilterGroup.TransferFields(locItemFilterGroup);
+                tempItemFilterGroup.Insert();
+            end;
+        until locItemFilterGroup.Next() = 0;
 
         if Page.RunModal(Page::"Item Filter Group List", tempItemFilterGroup) = Action::LookupOK then begin
             filterByValue += StrSubstNo('|%1', tempItemFilterGroup."Filter Value");

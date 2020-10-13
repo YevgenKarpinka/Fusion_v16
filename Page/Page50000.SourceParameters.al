@@ -13,47 +13,47 @@ page 50000 "Source Parameters"
         {
             repeater(RepeaterName)
             {
-                field("FSp Event"; "FSp Event")
+                field("FSp Event"; Rec."FSp Event")
                 {
                     ApplicationArea = All;
                 }
-                field(Code; Code)
+                field(Code; Rec.Code)
                 {
                     ApplicationArea = All;
                 }
-                field("FSp RestMethod"; "FSp RestMethod")
+                field("FSp RestMethod"; Rec."FSp RestMethod")
                 {
                     ApplicationArea = All;
                 }
-                field("FSp URL"; "FSp URL")
+                field("FSp URL"; Rec."FSp URL")
                 {
                     ApplicationArea = All;
                 }
-                field("FSp UserName"; "FSp UserName")
+                field("FSp UserName"; Rec."FSp UserName")
                 {
                     ApplicationArea = All;
                 }
-                field("FSp Password"; "FSp Password")
+                field("FSp Password"; Rec."FSp Password")
                 {
                     ApplicationArea = All;
                 }
-                field("FSp AuthorizationFrameworkType"; "FSp AuthorizationFrameworkType")
+                field("FSp AuthorizationFrameworkType"; Rec."FSp AuthorizationFrameworkType")
                 {
                     ApplicationArea = All;
                 }
-                field("FSp AuthorizationToken"; "FSp AuthorizationToken")
+                field("FSp AuthorizationToken"; Rec."FSp AuthorizationToken")
                 {
                     ApplicationArea = All;
                 }
-                field("FSp ContentType"; "FSp ContentType")
+                field("FSp ContentType"; Rec."FSp ContentType")
                 {
                     ApplicationArea = All;
                 }
-                field("FSp ETag"; "FSp ETag")
+                field("FSp ETag"; Rec."FSp ETag")
                 {
                     ApplicationArea = All;
                 }
-                field("FSp Accept"; "FSp Accept")
+                field("FSp Accept"; Rec."FSp Accept")
                 {
                     ApplicationArea = All;
                 }

@@ -23,6 +23,6 @@ pageextension 50023 "Whse. Shipment Subform Ext." extends "Whse. Shipment Subfor
         WhseShptHeader.Get(WhseShptLine."No.");
         if WhseShptHeader.Status = WhseShptHeader.Status::Open then
             ReleaseWhseShipment.Release(WhseShptHeader);
-        CreatePickDocAvailable(WhseShptLine, WhseShptHeader);
+        Rec.CreatePickDocAvailable(WhseShptLine, WhseShptHeader);
     end;
 }

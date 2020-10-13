@@ -11,7 +11,7 @@ page 50018 "Item Descr"
         {
             repeater(GroupName)
             {
-                field("Item No."; "Item No.")
+                field("Item No."; Rec."Item No.")
                 {
                     ApplicationArea = All;
 

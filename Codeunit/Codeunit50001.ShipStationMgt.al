@@ -22,15 +22,13 @@ codeunit 50001 "ShipStation Mgt."
         SalesLine: Record "Sales Line";
         positionGrossWeight: Decimal;
     begin
-        with SalesLine do begin
-            SetRange("Document Type", "Document Type"::Order);
-            SetRange("Document No.", OrderNo);
-            if FindSet() then
-                repeat
-                    positionGrossWeight += Quantity * "Gross Weight";
-                until Next() = 0;
-            exit(positionGrossWeight);
-        end;
+        SalesLine.SetRange("Document Type", SalesLine."Document Type"::Order);
+        SalesLine.SetRange("Document No.", OrderNo);
+        if SalesLine.FindSet() then
+            repeat
+                positionGrossWeight += SalesLine.Quantity * SalesLine."Gross Weight";
+            until SalesLine.Next() = 0;
+        exit(positionGrossWeight);
     end;
 
     procedure SentOrderShipmentStatusForWooComerse(_salesOrderNo: Code[20]; locShippedStatus: Integer)
@@ -236,19 +234,17 @@ codeunit 50001 "ShipStation Mgt."
     var
         IntegrationLog: Record "Integration Log";
     begin
-        with IntegrationLog do begin
-            Init();
-            "Operation Date" := CurrentDateTime;
-            "Source Operation" := Source;
-            Autorization := CopyStr(_Autorization, 1, MaxStrLen(Autorization));
-            "Rest Method" := RestMethod;
-            URL := _URL;
-            Success := isSuccess;
-            Insert(true);
-            SetRequest(_Request);
-            SetResponse(_Response);
-            Commit();
-        end;
+        IntegrationLog.Init();
+        IntegrationLog."Operation Date" := CurrentDateTime;
+        IntegrationLog."Source Operation" := Source;
+        IntegrationLog.Autorization := CopyStr(_Autorization, 1, MaxStrLen(IntegrationLog.Autorization));
+        IntegrationLog."Rest Method" := RestMethod;
+        IntegrationLog.URL := _URL;
+        IntegrationLog.Success := isSuccess;
+        IntegrationLog.Insert(true);
+        IntegrationLog.SetRequest(_Request);
+        IntegrationLog.SetResponse(_Response);
+        Commit();
     end;
 
     procedure GetOrdersFromShipStation(): Text
@@ -537,27 +533,25 @@ codeunit 50001 "ShipStation Mgt."
         _jsonItemFilterGroup: JsonObject;
         _jsonItemFilters: JsonArray;
     begin
-        with _ItemFilterGroup do begin
-            SetRange("Item No.", _ItemNo);
-            if FindSet(false, false) then
-                repeat
-                    if _oldItemFilterGroup <> "Filter Group" then begin
-                        _jsonItemFilterGroup.Add('name', "Filter Group");
-                        _jsonItemFilterGroup.Add('filters', AddItemFilterGroupArray("Item No.", "Filter Group"));
-                        _jsonItemFilterGroupArray.Add(_jsonItemFilterGroup);
-                        _jsonItemFilters.Add(_jsonItemFilterGroup);
-                        Clear(_jsonItemFilterGroup);
-                        // added 11/09/2020 >>
-                        _jsonItemFilterGroup.Add('name_ru', "Filter Group RUS");
-                        _jsonItemFilterGroup.Add('filters_ru', AddItemFilterGroupArray("Item No.", "Filter Group"));
-                        _jsonItemFilterGroupArray.Add(_jsonItemFilterGroup);
-                        _jsonItemFilters.Add(_jsonItemFilterGroup);
-                        Clear(_jsonItemFilterGroup);
-                        // added 11/09/2020 <<
-                        _oldItemFilterGroup := "Filter Group";
-                    end;
-                until Next() = 0;
-        end;
+        _ItemFilterGroup.SetRange("Item No.", _ItemNo);
+        if _ItemFilterGroup.FindSet(false, false) then
+            repeat
+                if _oldItemFilterGroup <> _ItemFilterGroup."Filter Group" then begin
+                    _jsonItemFilterGroup.Add('name', _ItemFilterGroup."Filter Group");
+                    _jsonItemFilterGroup.Add('filters', AddItemFilterGroupArray(_ItemFilterGroup."Item No.", _ItemFilterGroup."Filter Group"));
+                    _jsonItemFilterGroupArray.Add(_jsonItemFilterGroup);
+                    _jsonItemFilters.Add(_jsonItemFilterGroup);
+                    Clear(_jsonItemFilterGroup);
+                    // added 11/09/2020 >>
+                    _jsonItemFilterGroup.Add('name_ru', _ItemFilterGroup."Filter Group RUS");
+                    _jsonItemFilterGroup.Add('filters_ru', AddItemFilterGroupArray(_ItemFilterGroup."Item No.", _ItemFilterGroup."Filter Group"));
+                    _jsonItemFilterGroupArray.Add(_jsonItemFilterGroup);
+                    _jsonItemFilters.Add(_jsonItemFilterGroup);
+                    Clear(_jsonItemFilterGroup);
+                    // added 11/09/2020 <<
+                    _oldItemFilterGroup := _ItemFilterGroup."Filter Group";
+                end;
+            until _ItemFilterGroup.Next() = 0;
         exit(_jsonItemFilters);
     end;
 
@@ -566,14 +560,12 @@ codeunit 50001 "ShipStation Mgt."
         _ItemFilterGroup: Record "Item Filter Group";
         _jsonItemFilterGroupArray: JsonArray;
     begin
-        with _ItemFilterGroup do begin
-            SetRange("Item No.", _ItemNo);
-            SetRange("Filter Group", _FilterGroup);
-            if FindSet(false, false) then
-                repeat
-                    _jsonItemFilterGroupArray.Add("Filter Value");
-                until Next() = 0;
-        end;
+        _ItemFilterGroup.SetRange("Item No.", _ItemNo);
+        _ItemFilterGroup.SetRange("Filter Group", _FilterGroup);
+        if _ItemFilterGroup.FindSet(false, false) then
+            repeat
+                _jsonItemFilterGroupArray.Add(_ItemFilterGroup."Filter Value");
+            until _ItemFilterGroup.Next() = 0;
         exit(_jsonItemFilterGroupArray);
     end;
 
@@ -582,14 +574,12 @@ codeunit 50001 "ShipStation Mgt."
         _ItemFilterGroup: Record "Item Filter Group";
         _jsonItemFilterGroupArray: JsonArray;
     begin
-        with _ItemFilterGroup do begin
-            SetRange("Item No.", _ItemNo);
-            SetRange("Filter Group", _FilterGroup);
-            if FindSet(false, false) then
-                repeat
-                    _jsonItemFilterGroupArray.Add("Filter Value RUS");
-                until Next() = 0;
-        end;
+        _ItemFilterGroup.SetRange("Item No.", _ItemNo);
+        _ItemFilterGroup.SetRange("Filter Group", _FilterGroup);
+        if _ItemFilterGroup.FindSet(false, false) then
+            repeat
+                _jsonItemFilterGroupArray.Add(_ItemFilterGroup."Filter Value RUS");
+            until _ItemFilterGroup.Next() = 0;
         exit(_jsonItemFilterGroupArray);
     end;
 
@@ -601,15 +591,13 @@ codeunit 50001 "ShipStation Mgt."
     begin
         if not _ItemCategory.Get(_ItemCategoryCode) or (_ItemCategoryCode = '') then exit(_jsonObject);
 
-        with _ItemCategory do begin
-            if Indentation = _Level then begin
-                _jsonObject.Add('id', Description);
-                _jsonObject.Add('eng', Description);
-                exit(_jsonObject);
-            end;
-            if "Parent Category" <> '' then
-                exit(jsonGetCategory("Parent Category", _Level));
+        if _ItemCategory.Indentation = _Level then begin
+            _jsonObject.Add('id', _ItemCategory.Description);
+            _jsonObject.Add('eng', _ItemCategory.Description);
+            exit(_jsonObject);
         end;
+        if _ItemCategory."Parent Category" <> '' then
+            exit(jsonGetCategory(_ItemCategory."Parent Category", _Level));
         exit(_jsonObject);
     end;
 
@@ -763,22 +751,18 @@ codeunit 50001 "ShipStation Mgt."
     var
         salesHeader: Record "Sales Header";
     begin
-        with salesHeader do begin
-            Get("Document Type"::Order, salesOrderNo);
-            "ShipStation Status" := lblShipped;
-            Modify();
-        end;
+        salesHeader.Get(salesHeader."Document Type"::Order, salesOrderNo);
+        salesHeader."ShipStation Status" := lblShipped;
+        salesHeader.Modify();
     end;
 
     local procedure GetLocationCode(DocNo: Code[20]): Code[10]
     var
         _SalesLine: Record "Sales Line";
     begin
-        with _SalesLine do begin
-            SetRange("Document No.", DocNo);
-            SetRange("Document Type", "Document Type"::Order);
-            if FindFirst() then exit("Location Code");
-        end;
+        _SalesLine.SetRange("Document No.", DocNo);
+        _SalesLine.SetRange("Document Type", _SalesLine."Document Type"::Order);
+        if _SalesLine.FindFirst() then exit(_SalesLine."Location Code");
         exit('');
     end;
 
@@ -816,13 +800,11 @@ codeunit 50001 "ShipStation Mgt."
     var
         salesHeader: Record "Sales Header";
     begin
-        with salesHeader do begin
-            Get("Document Type"::Order, salesOrderNo);
-            "Package Tracking No." := '';
-            "ShipStation Shipment ID" := '';
-            "ShipStation Status" := lblAwaitingShipment;
-            Modify();
-        end;
+        salesHeader.Get(salesHeader."Document Type"::Order, salesOrderNo);
+        salesHeader."Package Tracking No." := '';
+        salesHeader."ShipStation Shipment ID" := '';
+        salesHeader."ShipStation Status" := lblAwaitingShipment;
+        salesHeader.Modify();
     end;
 
     local procedure UpdateOrderFromLabel(DocNo: Code[20]; jsonText: Text);
@@ -843,14 +825,12 @@ codeunit 50001 "ShipStation Mgt."
     var
         WhseShipLine: Record "Warehouse Shipment Line";
     begin
-        with WhseShipLine do begin
-            SetCurrentKey("Source Document", "Source No.");
-            SetRange("Source Document", "Source Document"::"Sales Order");
-            SetRange("Source No.", _DocNo);
-            if FindFirst() then begin
-                _WhseShipDcoNo := "No.";
-                exit(true);
-            end;
+        WhseShipLine.SetCurrentKey("Source Document", "Source No.");
+        WhseShipLine.SetRange("Source Document", WhseShipLine."Source Document"::"Sales Order");
+        WhseShipLine.SetRange("Source No.", _DocNo);
+        if WhseShipLine.FindFirst() then begin
+            _WhseShipDcoNo := WhseShipLine."No.";
+            exit(true);
         end;
         exit(false);
     end;
@@ -883,22 +863,20 @@ codeunit 50001 "ShipStation Mgt."
         FileManagement: Codeunit "File Management";
         Base64Convert: Codeunit "Base64 Convert";
     begin
-        with DocumentAttachment do begin
-            Init();
-            Validate("File Extension", FileManagement.GetExtension(IncomingFileName));
-            Validate("File Name", CopyStr(FileManagement.GetFileNameWithoutExtension(IncomingFileName), 1, MaxStrLen("File Name")));
+        DocumentAttachment.Init();
+        DocumentAttachment.Validate("File Extension", FileManagement.GetExtension(IncomingFileName));
+        DocumentAttachment.Validate("File Name", CopyStr(FileManagement.GetFileNameWithoutExtension(IncomingFileName), 1, MaxStrLen(DocumentAttachment."File Name")));
 
-            TenantMedia.Content.CreateOutStream(_OutStream);
-            Base64Convert.FromBase64(LabelBase64, _OutStream);
-            TenantMedia.Content.CreateInStream(_InStream);
-            "Document Reference ID".ImportStream(_InStream, IncomingFileName);
+        TenantMedia.Content.CreateOutStream(_OutStream);
+        Base64Convert.FromBase64(LabelBase64, _OutStream);
+        TenantMedia.Content.CreateInStream(_InStream);
+        DocumentAttachment."Document Reference ID".ImportStream(_InStream, IncomingFileName);
 
-            Validate("Table ID", RecRef.Number);
-            FieldRef := RecRef.Field(1);
-            RecNo := FieldRef.Value;
-            Validate("No.", RecNo);
-            Insert(true);
-        end;
+        DocumentAttachment.Validate("Table ID", RecRef.Number);
+        FieldRef := RecRef.Field(1);
+        RecNo := FieldRef.Value;
+        DocumentAttachment.Validate("No.", RecNo);
+        DocumentAttachment.Insert(true);
     end;
 
     procedure DeleteAttachment(_WhseShipDocNo: Code[20]; _FileName: Text[250])
@@ -913,16 +891,14 @@ codeunit 50001 "ShipStation Mgt."
         WhseShipHeader.Get(_WhseShipDocNo);
         _RecordRef.GETTABLE(WhseShipHeader);
 
-        with DocumentAttachment do begin
-            _FieldRef := _RecordRef.Field(1);
-            RecNo := _FieldRef.Value;
+        _FieldRef := _RecordRef.Field(1);
+        RecNo := _FieldRef.Value;
 
-            SetCurrentKey("Table ID", "No.", "File Name");
-            SetRange("Table ID", _RecordRef.Number);
-            SetRange("No.", RecNo);
-            SetRange("File Name", _FileName);
-            DeleteAll();
-        end;
+        DocumentAttachment.SetCurrentKey("Table ID", "No.", "File Name");
+        DocumentAttachment.SetRange("Table ID", _RecordRef.Number);
+        DocumentAttachment.SetRange("No.", RecNo);
+        DocumentAttachment.SetRange("File Name", _FileName);
+        DocumentAttachment.DeleteAll();
     end;
 
     [EventSubscriber(ObjectType::Page, 1174, 'OnBeforeDrillDown', '', true, true)]
@@ -932,11 +908,9 @@ codeunit 50001 "ShipStation Mgt."
         RecNo: Code[20];
         WSHeader: Record "Warehouse Shipment Header";
     begin
-        with DocumentAttachment do begin
-            RecRef.OPEN(DATABASE::"Warehouse Shipment Header");
-            IF WSHeader.GET("No.") THEN
-                RecRef.GETTABLE(WSHeader);
-        end;
+        RecRef.OPEN(DATABASE::"Warehouse Shipment Header");
+        IF WSHeader.GET(DocumentAttachment."No.") THEN
+            RecRef.GETTABLE(WSHeader);
     end;
 
     [EventSubscriber(ObjectType::Page, 1173, 'OnAfterOpenForRecRef', '', true, true)]
@@ -945,16 +919,15 @@ codeunit 50001 "ShipStation Mgt."
         FieldRef: FieldRef;
         RecNo: Code[20];
     begin
-        with DocumentAttachment do
-            CASE RecRef.NUMBER OF
-                DATABASE::"Warehouse Shipment Header":
-                    BEGIN
-                        SetRange("Table ID", Database::"Warehouse Shipment Header");
-                        FieldRef := RecRef.FIELD(1);
-                        RecNo := FieldRef.VALUE;
-                        SETRANGE("No.", RecNo);
-                    END;
-            END;
+        CASE RecRef.NUMBER OF
+            DATABASE::"Warehouse Shipment Header":
+                BEGIN
+                    DocumentAttachment.SetRange("Table ID", Database::"Warehouse Shipment Header");
+                    FieldRef := RecRef.FIELD(1);
+                    RecNo := FieldRef.VALUE;
+                    DocumentAttachment.SETRANGE("No.", RecNo);
+                END;
+        END;
     end;
 
     local procedure CreateListAsFilter(var _List: Text; _subString: Text)
@@ -1063,20 +1036,18 @@ codeunit 50001 "ShipStation Mgt."
         JSObjectLine: JsonObject;
         _Location: Record Location;
     begin
-        with _Location do begin
-            Get(LocationCode);
-            if Address = '' then exit(JSObjectLine);
-            JSObjectLine.Add('name', Contact);
-            JSObjectLine.Add('company', Name + "Name 2");
-            JSObjectLine.Add('street1', Address);
-            JSObjectLine.Add('street2', "Address 2");
-            JSObjectLine.Add('city', City);
-            JSObjectLine.Add('state', County);
-            JSObjectLine.Add('postalCode', "Post Code");
-            JSObjectLine.Add('country', "Country/Region Code");
-            JSObjectLine.Add('phone', "Phone No.");
-            JSObjectLine.Add('residential', false);
-        end;
+        _Location.Get(LocationCode);
+        if _Location.Address = '' then exit(JSObjectLine);
+        JSObjectLine.Add('name', _Location.Contact);
+        JSObjectLine.Add('company', _Location.Name + _Location."Name 2");
+        JSObjectLine.Add('street1', _Location.Address);
+        JSObjectLine.Add('street2', _Location."Address 2");
+        JSObjectLine.Add('city', _Location.City);
+        JSObjectLine.Add('state', _Location.County);
+        JSObjectLine.Add('postalCode', _Location."Post Code");
+        JSObjectLine.Add('country', _Location."Country/Region Code");
+        JSObjectLine.Add('phone', _Location."Phone No.");
+        JSObjectLine.Add('residential', false);
         exit(JSObjectLine);
     end;
 
@@ -1085,19 +1056,17 @@ codeunit 50001 "ShipStation Mgt."
         JSObjectLine: JsonObject;
         _CompanyInfo: Record "Company Information";
     begin
-        with _CompanyInfo do begin
-            Get();
-            JSObjectLine.Add('name', "Ship-to Contact");
-            JSObjectLine.Add('company', "Ship-to Name" + "Ship-to Name 2");
-            JSObjectLine.Add('street1', "Ship-to Address");
-            JSObjectLine.Add('street2', "Ship-to Address 2");
-            JSObjectLine.Add('city', "Ship-to City");
-            JSObjectLine.Add('state', "Ship-to County");
-            JSObjectLine.Add('postalCode', "Ship-to Post Code");
-            JSObjectLine.Add('country', "Ship-to Country/Region Code");
-            JSObjectLine.Add('phone', "Phone No.");
-            JSObjectLine.Add('residential', false);
-        end;
+        _CompanyInfo.Get();
+        JSObjectLine.Add('name', _CompanyInfo."Ship-to Contact");
+        JSObjectLine.Add('company', _CompanyInfo."Ship-to Name" + _CompanyInfo."Ship-to Name 2");
+        JSObjectLine.Add('street1', _CompanyInfo."Ship-to Address");
+        JSObjectLine.Add('street2', _CompanyInfo."Ship-to Address 2");
+        JSObjectLine.Add('city', _CompanyInfo."Ship-to City");
+        JSObjectLine.Add('state', _CompanyInfo."Ship-to County");
+        JSObjectLine.Add('postalCode', _CompanyInfo."Ship-to Post Code");
+        JSObjectLine.Add('country', _CompanyInfo."Ship-to Country/Region Code");
+        JSObjectLine.Add('phone', _CompanyInfo."Phone No.");
+        JSObjectLine.Add('residential', false);
         exit(JSObjectLine);
     end;
 
@@ -1332,18 +1301,16 @@ codeunit 50001 "ShipStation Mgt."
         JSText := Connect2ShipStation(5, '', _SSAgentCode);
 
         CarriersJSArray.ReadFrom(JSText);
-        with ShippingAgentServices do begin
-            SetCurrentKey("SS Carrier Code", "SS Code");
-            foreach CarrierToken in CarriersJSArray do begin
-                _SSAgentCode := CopyStr(GetJSToken(CarrierToken.AsObject(), 'carrierCode').AsValue().AsText(), 1, MaxStrLen(ShippingAgentServices."SS Carrier Code"));
-                _SSCode := CopyStr(GetJSToken(CarrierToken.AsObject(), 'code').AsValue().AsText(), 1, MaxStrLen(ShippingAgentServices."SS Code"));
+        ShippingAgentServices.SetCurrentKey("SS Carrier Code", "SS Code");
+        foreach CarrierToken in CarriersJSArray do begin
+            _SSAgentCode := CopyStr(GetJSToken(CarrierToken.AsObject(), 'carrierCode').AsValue().AsText(), 1, MaxStrLen(ShippingAgentServices."SS Carrier Code"));
+            _SSCode := CopyStr(GetJSToken(CarrierToken.AsObject(), 'code').AsValue().AsText(), 1, MaxStrLen(ShippingAgentServices."SS Code"));
 
-                SetRange("SS Carrier Code", _SSAgentCode);
-                SetRange("SS Code", _SSCode);
-                if not FindFirst() then
-                    InsertServicesFromShipStation(GetCarrierCodeBySSAgentCode(_SSAgentCode), GetLastCarrierServiceCode(GetCarrierCodeBySSAgentCode(_SSAgentCode)), _SSAgentCode, _SSCode,
-                                                  CopyStr(GetJSToken(CarrierToken.AsObject(), 'name').AsValue().AsText(), 1, MaxStrLen(ShippingAgentServices.Description)));
-            end;
+            ShippingAgentServices.SetRange("SS Carrier Code", _SSAgentCode);
+            ShippingAgentServices.SetRange("SS Code", _SSCode);
+            if not ShippingAgentServices.FindFirst() then
+                ShippingAgentServices.InsertServicesFromShipStation(GetCarrierCodeBySSAgentCode(_SSAgentCode), GetLastCarrierServiceCode(GetCarrierCodeBySSAgentCode(_SSAgentCode)), _SSAgentCode, _SSCode,
+                                              CopyStr(GetJSToken(CarrierToken.AsObject(), 'name').AsValue().AsText(), 1, MaxStrLen(ShippingAgentServices.Description)));
         end;
     end;
 
@@ -1385,14 +1352,12 @@ codeunit 50001 "ShipStation Mgt."
         foreach CarrierToken in CarriersJSArray do begin
             _SSAgentCode := CopyStr(GetJSToken(CarrierToken.AsObject(), 'carrierCode').AsValue().AsText(), 1, MaxStrLen(ShippingAgentServices."SS Carrier Code"));
             _SSCode := CopyStr(GetJSToken(CarrierToken.AsObject(), 'code').AsValue().AsText(), 1, MaxStrLen(ShippingAgentServices."SS Code"));
-            with ShippingAgentServices do begin
-                SetCurrentKey("SS Carrier Code", "SS Code");
-                SetRange("SS Carrier Code", _SSAgentCode);
-                SetRange("SS Code", _SSCode);
-                if FindFirst() then exit(true);
-                InsertServicesFromShipStation(GetCarrierCodeBySSAgentCode(_SSAgentCode), GetLastCarrierServiceCode(GetCarrierCodeBySSAgentCode(_SSAgentCode)), _SSAgentCode, _SSCode,
-                                              CopyStr(GetJSToken(CarrierToken.AsObject(), 'name').AsValue().AsText(), 1, MaxStrLen(ShippingAgentServices.Description)));
-            end;
+            ShippingAgentServices.SetCurrentKey("SS Carrier Code", "SS Code");
+            ShippingAgentServices.SetRange("SS Carrier Code", _SSAgentCode);
+            ShippingAgentServices.SetRange("SS Code", _SSCode);
+            if ShippingAgentServices.FindFirst() then exit(true);
+            ShippingAgentServices.InsertServicesFromShipStation(GetCarrierCodeBySSAgentCode(_SSAgentCode), GetLastCarrierServiceCode(GetCarrierCodeBySSAgentCode(_SSAgentCode)), _SSAgentCode, _SSCode,
+                                          CopyStr(GetJSToken(CarrierToken.AsObject(), 'name').AsValue().AsText(), 1, MaxStrLen(ShippingAgentServices.Description)));
         end;
         exit(true);
     end;
@@ -1401,12 +1366,10 @@ codeunit 50001 "ShipStation Mgt."
     var
         ShippingAgent: Record "Shipping Agent";
     begin
-        with ShippingAgent do begin
-            SetCurrentKey("SS Code");
-            SetRange("SS Code", _SSAgentCode);
-            FindFirst();
-            exit(Code);
-        end;
+        ShippingAgent.SetCurrentKey("SS Code");
+        ShippingAgent.SetRange("SS Code", _SSAgentCode);
+        ShippingAgent.FindFirst();
+        exit(ShippingAgent.Code);
     end;
 
     local procedure GetLastCarrierServiceCode(AgentCode: Code[10]): Code[10]
@@ -1443,14 +1406,12 @@ codeunit 50001 "ShipStation Mgt."
         TotalGrossWeight: Decimal;
     begin
         TotalGrossWeight := 0;
-        with _SL do begin
-            SetRange("Document Type", SalesHeader."Document Type");
-            SetRange("Document No.", SalesHeader."No.");
-            if FindSet(false, false) then
-                repeat
-                    TotalGrossWeight += Quantity * "Gross Weight";
-                until Next() = 0;
-        end;
+        _SL.SetRange("Document Type", SalesHeader."Document Type");
+        _SL.SetRange("Document No.", SalesHeader."No.");
+        if _SL.FindSet(false, false) then
+            repeat
+                TotalGrossWeight += _SL.Quantity * _SL."Gross Weight";
+            until _SL.Next() = 0;
         exit(TotalGrossWeight);
     end;
 
@@ -1469,10 +1430,8 @@ codeunit 50001 "ShipStation Mgt."
     var
         _SAS: Record "Shipping Agent Services";
     begin
-        with _SAS do begin
-            ModifyAll("Shipment Cost", 0);
-            ModifyAll("Other Cost", 0);
-        end;
+        _SAS.ModifyAll("Shipment Cost", 0);
+        _SAS.ModifyAll("Other Cost", 0);
     end;
 
     procedure GetRatesByCarrierFromShipStation(_SH: Record "Sales Header")
@@ -1510,18 +1469,16 @@ codeunit 50001 "ShipStation Mgt."
     begin
         foreach CarrierToken in jsonRatesArray do begin
             ServiceCode := CopyStr(GetJSToken(CarrierToken.AsObject(), 'serviceCode').AsValue().AsText(), 1, MaxStrLen(_SAS."SS Code"));
-            with _SAS do begin
-                SetCurrentKey("SS Carrier Code", "SS Code");
-                SetRange("SS Carrier Code", CarrierCode);
-                SetRange("SS Code", ServiceCode);
-                if not FindFirst() then
-                    // Insert Services
-                    InsertServicesFromShipStation(GetCarrierCodeBySSAgentCode(CarrierCode), GetLastCarrierServiceCode(GetCarrierCodeBySSAgentCode(CarrierCode)), CarrierCode, ServiceCode,
+            _SAS.SetCurrentKey("SS Carrier Code", "SS Code");
+            _SAS.SetRange("SS Carrier Code", CarrierCode);
+            _SAS.SetRange("SS Code", ServiceCode);
+            if not _SAS.FindFirst() then
+                // Insert Services
+                _SAS.InsertServicesFromShipStation(GetCarrierCodeBySSAgentCode(CarrierCode), GetLastCarrierServiceCode(GetCarrierCodeBySSAgentCode(CarrierCode)), CarrierCode, ServiceCode,
                                               CopyStr(GetJSToken(CarrierToken.AsObject(), 'serviceName').AsValue().AsText(), 1, MaxStrLen(_SAS.Description)));
-                "Shipment Cost" := GetJSToken(CarrierToken.AsObject(), 'shipmentCost').AsValue().AsDecimal();
-                "Other Cost" := GetJSToken(CarrierToken.AsObject(), 'otherCost').AsValue().AsDecimal();
-                Modify();
-            end;
+            _SAS."Shipment Cost" := GetJSToken(CarrierToken.AsObject(), 'shipmentCost').AsValue().AsDecimal();
+            _SAS."Other Cost" := GetJSToken(CarrierToken.AsObject(), 'otherCost').AsValue().AsDecimal();
+            _SAS.Modify();
         end;
     end;
 
@@ -1536,11 +1493,10 @@ codeunit 50001 "ShipStation Mgt."
 
     local procedure GetShipStationSetup()
     begin
-        with glShipStationSetup do
-            if not Get() then begin
-                Init();
-                Insert();
-            end;
+        if not glShipStationSetup.Get() then begin
+            glShipStationSetup.Init();
+            glShipStationSetup.Insert();
+        end;
     end;
 
     procedure GetCustomerNameFromWhseShipment(WhseShipmentNo: Code[20]): Text
@@ -1548,15 +1504,11 @@ codeunit 50001 "ShipStation Mgt."
         WhseShipmentLine: Record "Warehouse Shipment Line";
         SalesHeader: Record "Sales Header";
     begin
-        with WhseShipmentLine do begin
-            SetRange("No.", WhseShipmentNo);
-            if not FindFirst() then exit('');
-        end;
+        WhseShipmentLine.SetRange("No.", WhseShipmentNo);
+        if not WhseShipmentLine.FindFirst() then exit('');
 
-        with SalesHeader do begin
-            Get("Document Type"::Order, WhseShipmentLine."Source No.");
-            exit("Sell-to Customer Name");
-        end;
+        SalesHeader.Get(SalesHeader."Document Type"::Order, WhseShipmentLine."Source No.");
+        exit(SalesHeader."Sell-to Customer Name");
     end;
 
     procedure GetCustomerNameFromWhsePick(WhsePickNo: Code[20]): Text
@@ -1564,15 +1516,11 @@ codeunit 50001 "ShipStation Mgt."
         WhseActivityLine: Record "Warehouse Activity Line";
         SalesHeader: Record "Sales Header";
     begin
-        with WhseActivityLine do begin
-            SetRange("No.", WhsePickNo);
-            if not FindFirst() then exit('');
-        end;
+        WhseActivityLine.SetRange("No.", WhsePickNo);
+        if not WhseActivityLine.FindFirst() then exit('');
 
-        with SalesHeader do begin
-            Get("Document Type"::Order, WhseActivityLine."Source No.");
-            exit("Sell-to Customer Name");
-        end;
+        SalesHeader.Get(SalesHeader."Document Type"::Order, WhseActivityLine."Source No.");
+        exit(SalesHeader."Sell-to Customer Name");
     end;
 
     procedure CreateDeliverySalesLine(SalesOrderNo: Code[20]; customerNo: Code[20])

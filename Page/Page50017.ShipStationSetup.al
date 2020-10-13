@@ -14,15 +14,15 @@ page 50017 "ShipStation Setup"
         {
             group(General)
             {
-                field("ShipStation Integration Enable"; "ShipStation Integration Enable")
+                field("ShipStation Integration Enable"; Rec."ShipStation Integration Enable")
                 {
                     ApplicationArea = All;
                 }
-                field("Order Status Update"; "Order Status Update")
+                field("Order Status Update"; Rec."Order Status Update")
                 {
                     ApplicationArea = All;
                 }
-                field("Show Error"; "Show Error")
+                field("Show Error"; Rec."Show Error")
                 {
                     ApplicationArea = All;
                 }
@@ -50,12 +50,12 @@ page 50017 "ShipStation Setup"
 
     trigger OnOpenPage()
     begin
-        Reset();
-        if not Get() then begin
-            Init();
-            Insert();
+        Rec.Reset();
+        if not Rec.Get() then begin
+            Rec.Init();
+            Rec.Insert();
         end;
-        isEditable := "ShipStation Integration Enable";
+        isEditable := Rec."ShipStation Integration Enable";
     end;
 
     var

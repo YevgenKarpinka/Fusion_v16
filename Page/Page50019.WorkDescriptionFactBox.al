@@ -12,7 +12,7 @@ page 50019 "Work Description FactBox"
     {
         area(Content)
         {
-            field(WorkDescription; GetWorkDescription())
+            field(WorkDescription; Rec.GetWorkDescription())
             {
                 ApplicationArea = All;
                 ShowCaption = false;

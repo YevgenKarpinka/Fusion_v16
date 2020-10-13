@@ -50,15 +50,13 @@ tableextension 50005 "Shipping Agent Services Ext." extends "Shipping Agent Serv
 
     procedure TempInsertServicesFromShipStation(var _SAS: Record "Shipping Agent Services" temporary; CarrierCode: Code[10]; ServiceCode: Code[10]; SS_CarrierCode: Text[20]; SS_ServiceCode: Text[50]; SS_ServiceName: Text[100])
     begin
-        with _SAS do begin
-            Init();
-            "Shipping Agent Code" := CarrierCode;
-            Code := ServiceCode;
-            Insert();
-            "SS Carrier Code" := SS_CarrierCode;
-            "SS Code" := SS_ServiceCode;
-            Description := SS_ServiceName;
-            Modify();
-        end;
+        _SAS.Init();
+        _SAS."Shipping Agent Code" := CarrierCode;
+        _SAS.Code := ServiceCode;
+        _SAS.Insert();
+        _SAS."SS Carrier Code" := SS_CarrierCode;
+        _SAS."SS Code" := SS_ServiceCode;
+        _SAS.Description := SS_ServiceName;
+        _SAS.Modify();
     end;
 }

@@ -17,32 +17,32 @@ page 50008 "APIV2 - Agent Services"
         {
             group(GroupName)
             {
-                field(agentServicesId; SystemId)
+                field(agentServicesId; Rec.SystemId)
                 {
                     ApplicationArea = All;
                     Caption = 'agentServicesId', Locked = true;
                 }
-                field(serviceCode; Code)
+                field(serviceCode; Rec.Code)
                 {
                     ApplicationArea = All;
                     Caption = 'serviceCode', Locked = true;
                 }
-                field(agentCode; "Shipping Agent Code")
+                field(agentCode; Rec."Shipping Agent Code")
                 {
                     ApplicationArea = All;
                     Caption = 'agentCode', Locked = true;
                 }
-                field(description; Description)
+                field(description; Rec.Description)
                 {
                     ApplicationArea = All;
                     Caption = 'description', Locked = true;
                 }
-                field(ssCarrierCode; "SS Carrier Code")
+                field(ssCarrierCode; Rec."SS Carrier Code")
                 {
                     ApplicationArea = All;
                     Caption = 'ssCarrierCode', Locked = true;
                 }
-                field(ssCode; "SS Code")
+                field(ssCode; Rec."SS Code")
                 {
                     ApplicationArea = All;
                     Caption = 'ssCode', Locked = true;

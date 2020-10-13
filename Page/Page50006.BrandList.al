@@ -13,22 +13,22 @@ page 50006 "Brand List"
             repeater(RepeaterName)
             {
                 Editable = false;
-                field(Code; Code)
+                field(Code; Rec.Code)
                 {
                     ApplicationArea = All;
 
                 }
-                field("Manufacturer Code"; "Manufacturer Code")
+                field("Manufacturer Code"; Rec."Manufacturer Code")
                 {
                     ApplicationArea = All;
 
                 }
-                field(Name; Name)
+                field(Name; Rec.Name)
                 {
                     ApplicationArea = All;
 
                 }
-                field("Name RU"; "Name RU")
+                field("Name RU"; Rec."Name RU")
                 {
                     ApplicationArea = All;
 

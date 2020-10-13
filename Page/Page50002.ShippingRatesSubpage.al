@@ -18,19 +18,19 @@ page 50002 "Shipping Rates Subpage"
         {
             repeater(RepeaterName)
             {
-                field("SS Code"; "SS Code")
+                field("SS Code"; Rec."SS Code")
                 {
                     ApplicationArea = All;
                 }
-                field(Description; Description)
+                field(Description; Rec.Description)
                 {
                     ApplicationArea = All;
                 }
-                field("Shipment Cost"; "Shipment Cost")
+                field("Shipment Cost"; Rec."Shipment Cost")
                 {
                     ApplicationArea = All;
                 }
-                field("Other Cost"; "Other Cost")
+                field("Other Cost"; Rec."Other Cost")
                 {
                     ApplicationArea = All;
                 }
@@ -40,8 +40,8 @@ page 50002 "Shipping Rates Subpage"
 
     procedure GetAgentServiceCodes(var AgentCode: Code[10]; var ServiceCode: Code[10])
     begin
-        AgentCode := "Shipping Agent Code";
-        ServiceCode := Code;
+        AgentCode := Rec."Shipping Agent Code";
+        ServiceCode := Rec.Code;
     end;
 
     procedure InitPage(_SAS: Record "Shipping Agent Services")

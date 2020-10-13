@@ -9,10 +9,8 @@ codeunit 50000 "Item Descr. Management"
     var
         locItemDescription: Record "Item Description";
     begin
-        with locItemDescription do begin
-            SetRange("Item No.", Rec."No.");
-            DeleteAll();
-        end;
+        locItemDescription.SetRange("Item No.", Rec."No.");
+        locItemDescription.DeleteAll();
     end;
 
     [EventSubscriber(ObjectType::Table, 370, 'OnBeforeParseCellValue', '', true, true)]

@@ -13,32 +13,32 @@ page 50011 "Sales Lines List"
             repeater(RepeaterName)
             {
                 Editable = false;
-                field("Document Type"; "Document Type")
+                field("Document Type"; Rec."Document Type")
                 {
                     ApplicationArea = All;
 
                 }
-                field("Document No."; "Document No.")
+                field("Document No."; Rec."Document No.")
                 {
                     ApplicationArea = All;
 
                 }
-                field(Type; Type)
+                field(Type; Rec.Type)
                 {
                     ApplicationArea = All;
 
                 }
-                field("No."; "No.")
+                field("No."; Rec."No.")
                 {
                     ApplicationArea = All;
 
                 }
-                field(Description; Description)
+                field(Description; Rec.Description)
                 {
                     ApplicationArea = All;
 
                 }
-                field(Quantity; Quantity)
+                field(Quantity; Rec.Quantity)
                 {
                     ApplicationArea = All;
 
@@ -72,15 +72,13 @@ page 50011 "Sales Lines List"
         salesHeader: Record "Sales Header";
         salesLine: Record "Sales Line";
     begin
-        with tempSalesLine do begin
-            salesLine.FindSet(false, false);
-            repeat
-                if not salesHeader.Get(salesLine."Document Type", salesLine."Document No.") then begin
-                    tempSalesLine.TransferFields(salesLine);
-                    tempSalesLine.Insert();
-                end;
-            until salesLine.Next() = 0;
-        end;
+        salesLine.FindSet(false, false);
+        repeat
+            if not salesHeader.Get(salesLine."Document Type", salesLine."Document No.") then begin
+                tempSalesLine.TransferFields(salesLine);
+                tempSalesLine.Insert();
+            end;
+        until salesLine.Next() = 0;
     end;
 
     trigger OnFindRecord(Which: Text): Boolean
@@ -96,7 +94,7 @@ page 50011 "Sales Lines List"
                 Rec := tempSalesLine;
             exit(Found);
         end;
-        exit(Find(Which));
+        exit(Rec.Find(Which));
     end;
 
     var

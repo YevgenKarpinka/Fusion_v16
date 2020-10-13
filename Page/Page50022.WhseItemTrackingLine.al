@@ -11,57 +11,57 @@ page 50022 "Whse. Item Tracking Line"
         {
             repeater(repeaterName)
             {
-                field("Item No."; "Item No.")
+                field("Item No."; Rec."Item No.")
                 {
                     ApplicationArea = All;
 
                 }
-                field("Location Code"; "Location Code")
+                field("Location Code"; Rec."Location Code")
                 {
                     ApplicationArea = All;
 
                 }
-                field("Lot No."; "Lot No.")
+                field("Lot No."; Rec."Lot No.")
                 {
                     ApplicationArea = All;
 
                 }
-                field("Expiration Date"; "Expiration Date")
+                field("Expiration Date"; Rec."Expiration Date")
                 {
                     ApplicationArea = All;
 
                 }
-                field("Source Type"; "Source Type")
+                field("Source Type"; Rec."Source Type")
                 {
                     ApplicationArea = All;
 
                 }
-                field("Source ID"; "Source ID")
+                field("Source ID"; Rec."Source ID")
                 {
                     ApplicationArea = All;
 
                 }
-                field("Quantity (Base)"; "Quantity (Base)")
+                field("Quantity (Base)"; Rec."Quantity (Base)")
                 {
                     ApplicationArea = All;
 
                 }
-                field("Quantity Handled (Base)"; "Quantity Handled (Base)")
+                field("Quantity Handled (Base)"; Rec."Quantity Handled (Base)")
                 {
                     ApplicationArea = All;
 
                 }
-                field("Qty. to Handle (Base)"; "Qty. to Handle (Base)")
+                field("Qty. to Handle (Base)"; Rec."Qty. to Handle (Base)")
                 {
                     ApplicationArea = All;
 
                 }
-                field("Put-away Qty. (Base)"; "Put-away Qty. (Base)")
+                field("Put-away Qty. (Base)"; Rec."Put-away Qty. (Base)")
                 {
                     ApplicationArea = All;
 
                 }
-                field("Pick Qty. (Base)"; "Pick Qty. (Base)")
+                field("Pick Qty. (Base)"; Rec."Pick Qty. (Base)")
                 {
                     ApplicationArea = All;
 
