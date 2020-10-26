@@ -538,17 +538,12 @@ codeunit 50001 "ShipStation Mgt."
             repeat
                 if _oldItemFilterGroup <> _ItemFilterGroup."Filter Group" then begin
                     _jsonItemFilterGroup.Add('name', _ItemFilterGroup."Filter Group");
+                    _jsonItemFilterGroup.Add('name_ru', _ItemFilterGroup."Filter Group RUS"); // added 11/09/2020 >>
                     _jsonItemFilterGroup.Add('filters', AddItemFilterGroupArray(_ItemFilterGroup."Item No.", _ItemFilterGroup."Filter Group"));
+                    _jsonItemFilterGroup.Add('filters_ru', AddItemFilterGroupRUSArray(_ItemFilterGroup."Item No.", _ItemFilterGroup."Filter Group")); // added 11/09/2020 >>
                     _jsonItemFilterGroupArray.Add(_jsonItemFilterGroup);
                     _jsonItemFilters.Add(_jsonItemFilterGroup);
                     Clear(_jsonItemFilterGroup);
-                    // added 11/09/2020 >>
-                    _jsonItemFilterGroup.Add('name_ru', _ItemFilterGroup."Filter Group RUS");
-                    _jsonItemFilterGroup.Add('filters_ru', AddItemFilterGroupArray(_ItemFilterGroup."Item No.", _ItemFilterGroup."Filter Group"));
-                    _jsonItemFilterGroupArray.Add(_jsonItemFilterGroup);
-                    _jsonItemFilters.Add(_jsonItemFilterGroup);
-                    Clear(_jsonItemFilterGroup);
-                    // added 11/09/2020 <<
                     _oldItemFilterGroup := _ItemFilterGroup."Filter Group";
                 end;
             until _ItemFilterGroup.Next() = 0;
@@ -565,6 +560,20 @@ codeunit 50001 "ShipStation Mgt."
         if _ItemFilterGroup.FindSet(false, false) then
             repeat
                 _jsonItemFilterGroupArray.Add(_ItemFilterGroup."Filter Value");
+            until _ItemFilterGroup.Next() = 0;
+        exit(_jsonItemFilterGroupArray);
+    end;
+
+    local procedure AddItemFilterGroupRUSArray(_ItemNo: Code[20]; _FilterGroup: Text[50]): JsonArray
+    var
+        _ItemFilterGroup: Record "Item Filter Group";
+        _jsonItemFilterGroupArray: JsonArray;
+    begin
+        _ItemFilterGroup.SetRange("Item No.", _ItemNo);
+        _ItemFilterGroup.SetRange("Filter Group", _FilterGroup);
+        if _ItemFilterGroup.FindSet(false, false) then
+            repeat
+                _jsonItemFilterGroupArray.Add(_ItemFilterGroup."Filter Value RUS");
             until _ItemFilterGroup.Next() = 0;
         exit(_jsonItemFilterGroupArray);
     end;
