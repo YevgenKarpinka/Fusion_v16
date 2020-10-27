@@ -93,6 +93,10 @@ pageextension 50009 "Item List Ext." extends "Item List"
                         CurrPage.SetSelectionFilter(_Item);
 
                         Counter := 0;
+
+                        _Item.SetCurrentKey("Web Item");
+                        _Item.SetRange("Web Item", true);
+
                         TotalCount := _Item.Count;
                         ConfigProgressBarRecord.Init(TotalCount, Counter, STRSUBSTNO(ApplyingURLMsg, _Item.TableCaption));
 
@@ -159,8 +163,13 @@ pageextension 50009 "Item List Ext." extends "Item List"
                                 end;
                             _Item.SetRange("Transfered to eShop", false);
                         end;
+
                         Counter := 0;
+
+                        _Item.SetCurrentKey("Web Item");
+                        _Item.SetRange("Web Item", true);
                         TotalCount := _Item.Count;
+
                         ConfigProgressBarRecord.Init(TotalCount, Counter, STRSUBSTNO(ApplyingURLMsg, _Item.TableCaption));
 
                         if _Item.FindSet(false, false) then
@@ -225,7 +234,11 @@ pageextension 50009 "Item List Ext." extends "Item List"
                         CurrPage.SetSelectionFilter(_Item);
 
                         Counter := 0;
+
+                        _Item.SetCurrentKey("Web Item");
+                        _Item.SetRange("Web Item", true);
                         TotalCount := _Item.Count;
+
                         ConfigProgressBarRecord.Init(TotalCount, Counter, STRSUBSTNO(ApplyingURLMsg, _Item.TableCaption));
 
                         if _Item.FindSet(false, false) then
@@ -260,7 +273,11 @@ pageextension 50009 "Item List Ext." extends "Item List"
                         Counter: Integer;
                     begin
                         Counter := 0;
+
+                        _Item.SetCurrentKey("Web Item");
+                        _Item.SetRange("Web Item", true);
                         TotalCount := _Item.Count;
+
                         ConfigProgressBarRecord.Init(TotalCount, Counter, STRSUBSTNO(ApplyingURLMsg, _Item.TableCaption));
 
                         if _Item.FindSet(false, false) then

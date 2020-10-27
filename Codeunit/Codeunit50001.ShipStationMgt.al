@@ -377,7 +377,7 @@ codeunit 50001 "ShipStation Mgt."
         _jsonObject: JsonObject;
         _SalesPrice: Decimal;
     begin
-        if (ItemNo = '') or not _Item.Get(ItemNo) or not _Item."Web Item" or not _ItemDescription.Get(ItemNo) then exit(_jsonObject);
+        if (ItemNo = '') or not _Item.Get(ItemNo) or not _ItemDescription.Get(ItemNo) then exit(_jsonObject);
 
         _jsonObject.Add('itemId', _Item.SystemId);
         _jsonObject.Add('SKU', _Item."No.");
