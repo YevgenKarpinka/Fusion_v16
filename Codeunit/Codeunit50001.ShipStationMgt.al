@@ -114,6 +114,7 @@ codeunit 50001 "ShipStation Mgt."
         Client: HttpClient;
         responseText: Text;
         Autorization: Text;
+        jsonLogin: JsonObject;
     begin
         SourceParameters.Get(SPCode);
 
@@ -128,8 +129,11 @@ codeunit 50001 "ShipStation Mgt."
 
         if SourceParameters."FSp RestMethod" = SourceParameters."FSp RestMethod"::POST then begin
             if SPCode = 'LOGIN2ESHOP' then begin
-                Autorization := StrSubstNo('%1=%2&%3=%4', 'email', SourceParameters."FSp UserName", 'password', SourceParameters."FSp Password");
-                Body2Request := Autorization;
+                // Autorization := StrSubstNo('%1=%2&%3=%4', 'email', SourceParameters."FSp UserName", 'password', SourceParameters."FSp Password");
+                // Body2Request := Autorization;
+                jsonLogin.Add('email', SourceParameters."FSp UserName");
+                jsonLogin.Add('password', SourceParameters."FSp Password");
+                jsonLogin.WriteTo(Body2Request);
             end;
             RequestMessage.Content.WriteFrom(Body2Request);
             RequestMessage.Content.GetHeaders(Headers);
@@ -151,8 +155,11 @@ codeunit 50001 "ShipStation Mgt."
 
     procedure Connector2eShop(Body2Request: Text; var IsSuccessStatusCode: Boolean; var responseText: Text; SPCode: Code[20])
     begin
-        if globalToken = '' then
-            globalToken := DelChr(Connect2eShop('LOGIN2ESHOP', '', '', IsSuccessStatusCode), '<>', '"');
+        if globalToken = '' then begin
+            // get to endpoint GetToken
+            firstToken := DelChr(Connect2eShop('GETTOKEN', '', '', IsSuccessStatusCode), '<>', '"');
+            globalToken := DelChr(Connect2eShop('LOGIN2ESHOP', '', firstToken, IsSuccessStatusCode), '<>', '"');
+        end;
         if not IsSuccessStatusCode then begin
             responseText := globalToken;
             exit;
@@ -1553,4 +1560,5 @@ codeunit 50001 "ShipStation Mgt."
         _shippedStatus: TextConst ENU = 'Shipped', RUS = 'Отгружен';
         _assemblededStatus: TextConst ENU = 'Assembled', RUS = 'Собран';
         globalToken: Text;
+        firstToken: Text;
 }
